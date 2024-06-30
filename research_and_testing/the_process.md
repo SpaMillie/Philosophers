@@ -31,7 +31,7 @@
 	- fun fact: with multithreading the CPU fills in idle time, engages all the cores, stays active, allows for a more efficient use of its capabilities
 	- a deadlock is a situation when a thread can't proceed because it is waiting for another thread (or itself?) to release a lock (in this mutlithreading scenario; can apply to other contexts in computing)
 
-Remember:
+**Remember:**
 - (multiple) threads of execution 
 - context switching
 - memory state
@@ -52,15 +52,16 @@ Remember:
 | usleep | unistd.h | int usleep(useconds_t usec); | suspends  execution  of  the  calling thread for (at least) usec microseconds | 0 on success, -1 on error and errno set | 
 | gettimeofday | sys/time.h | int gettimeofday(struct timeval *tv, struct timezone *tz); | gets the time + timezone | 0 on success, -1 on error and errno set |
 | pthread_create | pthread.h | int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg); | starts a new thread in the calling process | on success returns 0; on error, it returns an error number, and the contents of *thread are undefined |
-| pthread_detach | ... | int pthread_detach(pthread_t thread); | function marks the thread identified by thread as detached, its resources are automatically released back to the system | on success returns 0; on error, it returns an error number |  
-| pthread_join | ... | int pthread_join(pthread_t thread, void **retval); | 
-| pthread_mutex_init
-| pthread_mutex_destroy
-| pthread_mutex_lock
-| pthread_mutex_unlock
+| pthread_detach | ... | int pthread_detach(pthread_t thread); | marks the thread as detached and returns its resources automatically back into the system | 0 on success, errno on error | 
+| pthread_join | ... | int pthread_join(pthread_t thread, void **retval); | functions like wait() for processes, only this is for threads | 0 on success, errno on error |
+| pthread_mutex_init* | ... | int pthread_mutex_init(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr); | initialise a mutex | 0 on success, errno on error | 
+| pthread_mutex_destroy | ... | int pthread_mutex_destroy(pthread_mutex_t *mutex); | the mutex object becomes, in effect, uninitialized; destroy only unlocked, initialised mutexes | 0 on success, errno on error |
+| pthread_mutex_lock | ... | int pthread_mutex_lock(pthread_mutex_t *mutex); |locks a mutex | 0 on success, errno on error | 
+| pthread_mutex_unlock | ... | int pthread_mutex_unlock(pthread_mutex_t *mutex); | unlocks a mutex | 0 on success, errno on error | 
 
+*If  attr  is NULL,  the  default mutex attributes are used; the effect shall be the same as passing the address of a default mutex attributes object. Upon successful initialization, the state of the mutex becomes initialized and unlocked.
 
-Things I'll definitely need:
+**Things I'll definitely need:**
 error handling for too many or too few arguments
 an ft_usleep instead of just using usleep
 timestamps need to be in order
@@ -70,5 +71,62 @@ a monitoring mechanism (checking whether the philosopher has died or not)
 checking if there are forks available
 starting odd- or even-numbered philosophers a ms ahead(?)
 
-Notes:
+**Notes:**
 gettimeofday might need two variables - one set at the beginning of the process and another one to subtract the first one from to get the time elapsed in-between the executions
+
+## Pseudocode
+
+**struct**
+number_of_philosophers
+time_to_die
+time_to_eat
+time_to_sleep
+(number_of_times_each_philosopher_must_eat)
+int *mutex_id
+int *philo_id
+int start_time
+int cur_time
+int argc
+
+**struct philo**
+time_to_die
+time_to_eat
+time_to_sleep
+(how_many_times_should_eat)
+
+__main__
+if argc == 4 || == 5
+	start
+else
+	error (invalid arguments)
+
+__start__
+atoi args and save in a struct
+if any arg > INT_MAX
+	return (invalid args)
+create_threads
+init_mutex
+run_simulation
+destroy_mutex
+detach_threads
+cleanup?
+
+__create_threads__
+while philo_num > i
+	check = pthread_create
+	if (check != 0)
+		error
+
+init_mutex
+//are atr NULL or specified?
+while philo_num > i
+	check = pthread_create
+	if (check != 0)
+		error
+//maybe can go into create_threads?
+
+__run_simulation__
+if num_philo == 1
+	ft_die
+	return
+
