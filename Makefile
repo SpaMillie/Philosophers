@@ -6,13 +6,14 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/07/01 12:25:00 by mspasic          ###   ########.fr        #
+#    Updated: 2024/07/02 19:08:24 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SOURCES = main.c 
+SOURCES = main.c \
+		ft_atoi.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -23,7 +24,7 @@ FLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(CC) $(FLAGS) -o $(NAME) $(OBJECTS)
+	$(CC) $(FLAGS) -o $(NAME) $(OBJECTS) -I include
 
 clean:
 	rm -f $(OBJECTS)
