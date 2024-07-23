@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/02 19:34:44 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/23 12:29:30 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	philo_atoi(char *str, int i, t_agora *forum)
 	if (num < 0)
 	{
 		printf("num is %d\n", num);
-		printf("Sorry! The philosophers find these 'numbers' unacceptable.\n");
+		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
 	init_args(i, num, forum);
@@ -55,10 +55,38 @@ static int	philo_atoi(char *str, int i, t_agora *forum)
 		printf("plus eating for %d times\n", forum->meal_num);
 	return (0);
 }
+void	assign_philo(t_agora *forum, t_philo *sophy, int i)
+{
+	sophy->index = i;
+	if (i == 0)
+	{
+		sophy->right_fork = 
+	}
+	if (forum->argc == 5)
+		sophy->meal_num = forum->meal_num;
+	else
+		sophy->meal_num = -2;
+	sophy->time_to_sleep = forum->time_to_sleep;
+	sophy->time_to_die = forum->time_to_die;
+	sophy->time_to_eat = forum->time_to_eat;
+}
+
+int	allocate_forks(t_agora *forum, t_philo *sophies)
+{
+	forum->forks = malloc(sizeof(int) * forum->philo_num);
+	if (!forum->forks)
+	{
+		printf("Error: Malloc failed.\n");
+		free(sophies);
+		return (-1);
+	}
+	return (0);
+}
 
 static void	start(t_agora *forum, char **argv)
 {
 	int	i;
+	t_philo *sophies;
 
 	i = 0;
 	while (i < forum->argc)
@@ -67,6 +95,18 @@ static void	start(t_agora *forum, char **argv)
 			return ;
 		i++;
 	}
+	sophies = malloc(sizeof(t_philo) * forum->philo_num);
+	if (!sophies)
+	{
+		printf("Error: Malloc failed.\n");
+		return ;
+	}
+	if (forum->philo_num == 1)
+		return (resolve_one(forum, sophies)); //make this
+	allocate_forks(forum, sophies);
+	i = -1;
+	while (++i < forum->philo_num)
+		assign_philo(forum, &sophies[i], i);
 }
 
 int	main(int argc, char **argv)
@@ -86,14 +126,13 @@ int	main(int argc, char **argv)
 		{
 			if (digit_finder(argv[i]) == -1)
 			{
-				printf("Sorry! The philosophers accept only normal-looking numbers.\n");
+				printf("Error: Invalid arguments. Try actual numbers.\n");
 				return (0);
 			}
 			i++;
 		}
-		printf("Arguments valid (for now)\n");
 		start(&forum, argv + 1);
 	}
 	else
-		printf("Sorry! The philosophers accept only 4 or 5 arguments!\n");
+		printf("Error: Invalid number of arguments.\n");
 }
