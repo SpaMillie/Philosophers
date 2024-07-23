@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/23 12:29:30 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/23 15:05:38 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,15 @@ static int	philo_atoi(char *str, int i, t_agora *forum)
 void	assign_philo(t_agora *forum, t_philo *sophy, int i)
 {
 	sophy->index = i;
-	if (i == 0)
+	 if (i == forum->philo_num - 1)
 	{
-		sophy->right_fork = 
+		sophy->right_fork = forum->forks[i];
+		sophy->left_fork = forum->forks[0];
+	}
+	else
+	{
+		sophy->right_fork = forum->forks[i];
+		sophy->left_fork = forum->forks[i + 1];
 	}
 	if (forum->argc == 5)
 		sophy->meal_num = forum->meal_num;
@@ -73,6 +79,9 @@ void	assign_philo(t_agora *forum, t_philo *sophy, int i)
 
 int	allocate_forks(t_agora *forum, t_philo *sophies)
 {
+	int	i;
+
+	i = -1;
 	forum->forks = malloc(sizeof(int) * forum->philo_num);
 	if (!forum->forks)
 	{
@@ -80,6 +89,8 @@ int	allocate_forks(t_agora *forum, t_philo *sophies)
 		free(sophies);
 		return (-1);
 	}
+	while (++i < forum->philo_num)
+		forum->forks[i] = i;
 	return (0);
 }
 
@@ -88,12 +99,11 @@ static void	start(t_agora *forum, char **argv)
 	int	i;
 	t_philo *sophies;
 
-	i = 0;
-	while (i < forum->argc)
+	i = -1;
+	while (++i < forum->argc)
 	{
 		if (philo_atoi(argv[i], i, forum) == -1)
 			return ;
-		i++;
 	}
 	sophies = malloc(sizeof(t_philo) * forum->philo_num);
 	if (!sophies)
@@ -101,8 +111,6 @@ static void	start(t_agora *forum, char **argv)
 		printf("Error: Malloc failed.\n");
 		return ;
 	}
-	if (forum->philo_num == 1)
-		return (resolve_one(forum, sophies)); //make this
 	allocate_forks(forum, sophies);
 	i = -1;
 	while (++i < forum->philo_num)
