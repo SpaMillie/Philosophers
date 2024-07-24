@@ -6,11 +6,22 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/24 13:00:27 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:58:32 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
+
+void	void_malloc_failed(void)
+{
+	printf("Error: Malloc failed.\n");
+}
+
+int	int_malloc_failed(void)
+{
+	printf("Error: Malloc failed.\n");
+	return (-1);
+}
 
 static int	digit_finder(char *str)
 {
@@ -79,17 +90,15 @@ int	allocate_forks_locks(t_agora *forum, t_philo *sophies)
 	forum->forks = malloc(sizeof(int) * forum->philo_num);
 	if (!forum->forks)
 	{
-		printf("Error: Malloc failed.\n");
 		free(sophies);
-		return (-1);
+		return (int_malloc_failed());
 	}
 	forum->locks = malloc(sizeof(pthread_mutex_t) * forum->philo_num);
 	if (!forum->locks)
 	{
-		printf("Error: Malloc failed.\n");
 		free(sophies);
 		free(forum->forks);
-		return (-1);
+		return (int_malloc_failed());
 	}
 	while (++i < forum->philo_num)
 	{
@@ -121,10 +130,7 @@ static void	start(t_agora *forum, char **argv)
 		return ;
 	sophies = malloc(sizeof(t_philo) * forum->philo_num);
 	if (!sophies)
-	{
-		printf("Error: Malloc failed.\n");
-		return ;
-	}
+		return (void_malloc_failed);
 	allocate_forks_locks(forum, sophies);
 	i = -1;
 	while (++i < forum->philo_num)
