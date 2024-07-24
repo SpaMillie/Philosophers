@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/23 15:05:38 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/24 13:00:27 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,29 +45,22 @@ static int	philo_atoi(char *str, int i, t_agora *forum)
 	num = ft_atoi(str);
 	if (num < 0)
 	{
-		printf("num is %d\n", num);
 		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
 	init_args(i, num, forum);
-	printf("there are %d philos, dying %d, eating %d, sleeping %d\n", forum->philo_num, forum->time_to_die, forum->time_to_eat, forum->time_to_sleep);
-	if (i == 4)
-		printf("plus eating for %d times\n", forum->meal_num);
 	return (0);
 }
+
 void	assign_philo(t_agora *forum, t_philo *sophy, int i)
 {
 	sophy->index = i;
+	sophy->right_fork = &forum->forks[i];
+
 	 if (i == forum->philo_num - 1)
-	{
-		sophy->right_fork = forum->forks[i];
-		sophy->left_fork = forum->forks[0];
-	}
+		sophy->left_fork = &forum->forks[0];
 	else
-	{
-		sophy->right_fork = forum->forks[i];
-		sophy->left_fork = forum->forks[i + 1];
-	}
+		sophy->left_fork = &forum->forks[i + 1];
 	if (forum->argc == 5)
 		sophy->meal_num = forum->meal_num;
 	else
@@ -75,9 +68,10 @@ void	assign_philo(t_agora *forum, t_philo *sophy, int i)
 	sophy->time_to_sleep = forum->time_to_sleep;
 	sophy->time_to_die = forum->time_to_die;
 	sophy->time_to_eat = forum->time_to_eat;
+	printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
 }
 
-int	allocate_forks(t_agora *forum, t_philo *sophies)
+int	allocate_forks_locks(t_agora *forum, t_philo *sophies)
 {
 	int	i;
 
@@ -89,8 +83,32 @@ int	allocate_forks(t_agora *forum, t_philo *sophies)
 		free(sophies);
 		return (-1);
 	}
+	forum->locks = malloc(sizeof(pthread_mutex_t) * forum->philo_num);
+	if (!forum->locks)
+	{
+		printf("Error: Malloc failed.\n");
+		free(sophies);
+		free(forum->forks);
+		return (-1);
+	}
 	while (++i < forum->philo_num)
+	{
 		forum->forks[i] = i;
+		printf("allocated %d\n", forum->forks[i]);
+	}
+	return (0);
+}
+
+int	check_args(t_agora *forum, char **argv)
+{
+	int	i;
+
+	i = -1;
+	while (++i < forum->argc)
+	{
+		if (philo_atoi(argv[i], i, forum) == -1)
+			return (-1);
+	}
 	return (0);
 }
 
@@ -99,22 +117,25 @@ static void	start(t_agora *forum, char **argv)
 	int	i;
 	t_philo *sophies;
 
-	i = -1;
-	while (++i < forum->argc)
-	{
-		if (philo_atoi(argv[i], i, forum) == -1)
-			return ;
-	}
+	if (check_args(forum, argv) == -1)
+		return ;
 	sophies = malloc(sizeof(t_philo) * forum->philo_num);
 	if (!sophies)
 	{
 		printf("Error: Malloc failed.\n");
 		return ;
 	}
-	allocate_forks(forum, sophies);
+	allocate_forks_locks(forum, sophies);
 	i = -1;
 	while (++i < forum->philo_num)
 		assign_philo(forum, &sophies[i], i);
+	free(sophies);
+}
+
+void	cleanup(t_agora *forum)
+{
+	free(forum->forks);
+	free(forum->locks);
 }
 
 int	main(int argc, char **argv)
@@ -140,6 +161,7 @@ int	main(int argc, char **argv)
 			i++;
 		}
 		start(&forum, argv + 1);
+		cleanup(&forum);
 	}
 	else
 		printf("Error: Invalid number of arguments.\n");

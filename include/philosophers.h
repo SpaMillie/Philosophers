@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/23 12:19:03 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/24 12:39:23 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define PHILO_H
 
 # include <stdio.h>
+# include <pthread.h>
+# include <stdlib.h>
 
 typedef struct s_agora
 {
@@ -23,7 +25,9 @@ typedef struct s_agora
 	int	time_to_sleep;
 	int	meal_num;
 	int	argc;
+	int	start_time;
 	int	*forks;
+	pthread_mutex_t	*locks;
 }	t_agora;
 
 typedef struct	s_philo

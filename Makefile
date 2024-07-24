@@ -6,7 +6,7 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/07/02 19:08:24 by mspasic          ###   ########.fr        #
+#    Updated: 2024/07/24 12:44:39 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,4 +35,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
