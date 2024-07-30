@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/29 21:10:51 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/30 21:22:16 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 void	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 {
-	sophy->philo_num = i;
+	sophy->philo_num = i; //dnt forget that this isnt total philo_num
 	sophy->right_fork = fork[i];
 	if (i == frm->philo_num - 1)
 		sophy->left_fork = fork[0];
@@ -31,29 +31,10 @@ void	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 	sophy->time_to_die = frm->time_to_die;
 	sophy->time_to_eat = frm->time_to_eat;
 	sophy->start_time = frm->start_time;
-	printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
-}
-
-int	destroy_mut(pthread_mutex_t *mutex)
-{
-	if (pthread_mutex_destroy(mutex) != 0)
-	{
-		printf("Error: couldn't destroy mutex\n");
-		return (1);
-	}
-	return (0);
-}
-
-int	init_failed(t_philo *sphs, pthread_mutex_t **frks, int i)
-{
-	printf("Error: initialisation failed.\n");
-	free(sphs);
-	while (--i > -1)
-	{
-		if (destroy_mut(frks[i]) != 0)
-			return (1);
-	}
-	return (0);
+	sophy->printing = frm->printing;
+	sophy->eating = frm->eating;
+	sophy->flag_means_death = 0;
+	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
 }
 
 int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
@@ -72,8 +53,28 @@ int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 	return (0);
 }
 
+void	monitoring(t_brief *casing)
+{
+	while (1)
+	{
+		//create philo threads
+		//check for errors
+
+	}
+}
+
 void	start_simulation(t_philo *frm, t_philo *sphs, pthread_mutex_t *frk)
 {
+	t_brief casing;
+
+	casing.forum = frm;
+	casing.sophies = sphs;
+	casing.forks = frk;	
+	if (pthread_create(&frm->thread, NULL, &monitoring, &casing) != 0)
+	{
+		//join thread(s) and destroy mutexes
+	}
+
 
 }
 

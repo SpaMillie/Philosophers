@@ -6,15 +6,16 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/07/29 21:09:48 by mspasic          ###   ########.fr        #
+#    Updated: 2024/07/30 17:37:17 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 SOURCES = main.c \
-		args.c \
+		handle_args.c \
 		ft_atoi.c \
+		timing.c \
 		utils.c
 
 OBJECTS = $(SOURCES:.c=.o)

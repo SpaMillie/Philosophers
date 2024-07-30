@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   args.c                                             :+:      :+:    :+:   */
+/*   handle_args.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/29 20:41:46 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/30 17:40:27 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,29 @@ int	digit_finder(char *str)
 	}
 }
 
-static void	init_args(int i, int num, t_philo *forum)
+int	mutex_print_eat(t_philo *forum)
+{
+	pthread_mutex_t	printing;
+	pthread_mutex_t	eating;
+
+	if (pthread_mutex_init(&printing, NULL) != 0)
+	{
+		printf("Error: initialisation failed.\n");
+		if (destroy_mut(&printing) != 0)
+			return (1);
+	}
+	forum->printing = &printing;
+	if (pthread_mutex_init(&eating, NULL) != 0)
+	{
+		printf("Error: initialisation failed.\n");
+		if (destroy_mut(&eating) != 0)
+			return (1);
+	}
+	forum->eating = &eating;
+	return (0);
+}
+
+static int	init_args(int i, int num, t_philo *forum)
 {
 	if (i == 0)
 		forum->philo_num = num;
@@ -42,7 +64,8 @@ static void	init_args(int i, int num, t_philo *forum)
 	}
 	else if (i == 4)
 		forum->meal_num = num;
-	forum->start_time = //GETTIME
+	forum->start_time = get_time();
+	return(mutex_print_eat(forum));
 }
 
 static int	philo_atoi(char *str, int i, t_philo *forum)
@@ -55,8 +78,7 @@ static int	philo_atoi(char *str, int i, t_philo *forum)
 		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
-	init_args(i, num, forum);
-	return (0);
+	return(init_args(i, num, forum) == 1);
 }
 
 int	check_args(t_philo *forum, char **argv, int argc)

@@ -6,15 +6,15 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 21:12:17 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/29 21:51:11 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/07/30 17:13:59 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-unsigned long long get_time(void)
+size_t  get_time(void)
 {
-    unsigned long long  millisec;
+    size_t  millisec;
     struct timeval   tv;
  
     gettimeofday(&tv, NULL);
