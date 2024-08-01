@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/07/30 17:40:27 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/01 18:42:01 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,23 @@ int	digit_finder(char *str)
 	}
 }
 
+int	mutex_initing(pthread_mutex_t *current)
+{
+	pthread_mutex_t	cur;
+
+	if (pthread_mutex_init(&cur, NULL) != 0)
+	{
+		printf("Error: initialisation failed.\n");
+		if (destroy_mut(&cur) != 0)
+			return (1);
+	}
+	current = &cur;
+	return (0);	
+}
+//change and apply to mutex_initing
 int	mutex_print_eat(t_philo *forum)
 {
 	pthread_mutex_t	printing;
-	pthread_mutex_t	eating;
 
 	if (pthread_mutex_init(&printing, NULL) != 0)
 	{
@@ -39,13 +52,6 @@ int	mutex_print_eat(t_philo *forum)
 			return (1);
 	}
 	forum->printing = &printing;
-	if (pthread_mutex_init(&eating, NULL) != 0)
-	{
-		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&eating) != 0)
-			return (1);
-	}
-	forum->eating = &eating;
 	return (0);
 }
 
