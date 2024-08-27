@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/01 18:41:32 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/27 17:41:57 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,10 +187,14 @@ void	monitoring(t_omni *data)
 		if (check_appetite(data));
 			break ;
 	}
-	check = -1;
-	while (++check < data->forum->philo_num)
-		pthread_join(data->sophies[check], NULL);
+	//unlock everything, change flags, destroy mutexes 
+	// check = -1;
+	// while (++check < data->forum->philo_num)
+	// 	pthread_join(data->sophies[check], NULL);
 }
+
+void	create_threads()
+{}
 
 void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 {
@@ -202,16 +206,12 @@ void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 	data.sophies = sphs;
 	data.forks = frk;
 	if (pthread_create(&frm->thread, NULL, &monitoring, &data) != 0)
-	{
 		printf("Error: failed to create the monitoring thread\n");
-		while (++i > data.forum->philo_num)
-		{
-			if (destroy_mut(data.forks[i]) != 0)
-				printf("Error: mutex %d is not destroyed\n", i);
-		}
-	}
+	else
+		create_threads(&data, frm, sphs, frk);	
 	while (++i < data.forum->philo_num)
 		pthread_join(data.sophies[i], NULL);
+	//join monitoring
 	i = -1;	
 	while (++i > data.forum->philo_num)
 	{
