@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/01 18:33:42 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/28 09:57:00 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,8 @@ typedef struct	s_philo
 	pthread_t	thread;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*printing;
-	pthread_mutex_t	eating;
-	pthread_mutex_t	alive;
+	pthread_mutex_t	*timing;
+	pthread_mutex_t	*living;
 }	t_philo;
 
 typedef struct s_omni

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/01 18:42:01 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/28 09:54:30 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,15 @@ int	mutex_initing(pthread_mutex_t *current)
 //change and apply to mutex_initing
 int	mutex_print_eat(t_philo *forum)
 {
-	pthread_mutex_t	printing;
+	pthread_mutex_t	timing;
 
-	if (pthread_mutex_init(&printing, NULL) != 0)
+	if (pthread_mutex_init(&timing, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&printing) != 0)
+		if (destroy_mut(&timing) != 0)
 			return (1);
 	}
-	forum->printing = &printing;
+	forum->timing = &timing;
 	return (0);
 }
 

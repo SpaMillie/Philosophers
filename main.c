@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/27 17:41:57 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/28 09:59:00 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ void	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 	sophy->time_to_die = frm->time_to_die;
 	sophy->time_to_eat = frm->time_to_eat;
 	sophy->start_time = frm->start_time;
-	sophy->printing = frm->printing;
-	sophy->eating = frm->eating;
+	sophy->timing = frm->timing;
+	sophy->living = frm->living;
 	sophy->dead = 0;
-	if (pthread_mutex_init(&sophy->eating, NULL) != 0)
+	if (pthread_mutex_init(&sophy->living, NULL) != 0)
 	//apply this to mutex_initing and add a check to see if you need to destroy all mutexes and free stuff
 	{
 		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&sophy->eating) != 0)
+		if (destroy_mut(&sophy->living) != 0)
 			return ;
 	}
 	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
@@ -63,10 +63,10 @@ void	ft_print(char *str, t_philo *cur_ph, int i)
 	size_t	cur_time;
 
 	cur_time = get_time();
-	pthread_mutex_lock(&cur_ph->printing);
+	pthread_mutex_lock(&cur_ph->timing);
 	printf("%lu philosopher %d %s\n", cur_time - cur_ph->start_time, 
 		cur_ph->philo_num, str);
-	pthread_mutex_unlock(&cur_ph->printing);
+	pthread_mutex_unlock(&cur_ph->timing);
 }
 
 void	death_ensues(t_philo **sophies, int i, int max)
@@ -153,6 +153,8 @@ void	order_up(t_philo *sopher)
 	else
 		think_first(sopher);
 }
+void	order_up(void )
+{}
 
 int	philogenesis(t_omni *data)
 {
@@ -175,11 +177,6 @@ int	philogenesis(t_omni *data)
 
 void	monitoring(t_omni *data)
 {
-	int	check;
-
-	check = philogenesis(data);
-	if (check != 0)
-		return (genesis_error(data, check));
 	while (1)
 	{
 		if (check_death(data))
@@ -193,9 +190,6 @@ void	monitoring(t_omni *data)
 	// 	pthread_join(data->sophies[check], NULL);
 }
 
-void	create_threads()
-{}
-
 void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 {
 	t_omni	data;
@@ -208,15 +202,20 @@ void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 	if (pthread_create(&frm->thread, NULL, &monitoring, &data) != 0)
 		printf("Error: failed to create the monitoring thread\n");
 	else
-		create_threads(&data, frm, sphs, frk);	
-	while (++i < data.forum->philo_num)
-		pthread_join(data.sophies[i], NULL);
-	//join monitoring
-	i = -1;	
-	while (++i > data.forum->philo_num)
 	{
-		if (destroy_mut(data.forks[i]) != 0)
-			printf("Error: mutex %d is not destroyed\n", i);
+		if (!philogenesis(&data))
+		{
+			while (++i < data.forum->philo_num)
+				pthread_join(data.sophies[i], NULL);
+		}
+		pthread_join(&frm->thread, NULL);
+		i = -1;	
+		while (++i > data.forum->philo_num) 
+		//destroying mutexes within another function? it has to go before joining threads because of norminette
+		{
+			if (destroy_mut(data.forks[i]) != 0)
+				printf("Error: mutex %d is not destroyed\n", i);
+		}
 	}
 }
 
