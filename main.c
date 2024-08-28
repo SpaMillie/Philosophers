@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 09:59:00 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/28 15:52:29 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ void	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 	sophy->time_to_eat = frm->time_to_eat;
 	sophy->start_time = frm->start_time;
 	sophy->timing = frm->timing;
-	sophy->living = frm->living;
+	sophy->state = frm->state;
 	sophy->dead = 0;
-	if (pthread_mutex_init(&sophy->living, NULL) != 0)
+	if (pthread_mutex_init(&sophy->state, NULL) != 0)
 	//apply this to mutex_initing and add a check to see if you need to destroy all mutexes and free stuff
 	{
 		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&sophy->living) != 0)
+		if (destroy_mut(&sophy->state) != 0)
 			return ;
 	}
 	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
@@ -54,10 +54,19 @@ int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 	while (++i < forum->philo_num)
 	{
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
-			return (init_failed(*sophies, &forks, i));
+		{
+			printf("Error: initialisation failed.\n");
+			free(&sophies); //this is probably an issue
+			while (--i > -1)
+				pthread_mutex_destroy(&forks[i]);
+			pthread_mutex_destroy(forum->timing);
+			return (-1);
+		}
+			// return (init_failed(forum, *sophies, &forks, i));
 	}
 	return (0);
 }
+
 void	ft_print(char *str, t_philo *cur_ph, int i)
 {
 	size_t	cur_time;
@@ -102,14 +111,14 @@ int	check_death(t_omni *data)
 	i = 0;
 	while (i < data->forum->philo_num)
 	{
-		pthread_mutex_lock(&data->sophies[i]->eating);
+		pthread_mutex_lock(&data->sophies[i]->state);
 		if (data->sophies[i]->dead == 1)
 		{
 			death_ensues(data->sophies, i, \
 				data->forum->philo_num);
 			return (1) ;
 		}
-		pthread_mutex_lock(&data->sophies[i]->eating);
+		pthread_mutex_lock(&data->sophies[i]->state);
 		i++;
 	}
 	return (0);
@@ -211,11 +220,7 @@ void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 		pthread_join(&frm->thread, NULL);
 		i = -1;	
 		while (++i > data.forum->philo_num) 
-		//destroying mutexes within another function? it has to go before joining threads because of norminette
-		{
-			if (destroy_mut(data.forks[i]) != 0)
-				printf("Error: mutex %d is not destroyed\n", i);
-		}
+			pthread_mutex_destroy(data.forks[i]);
 	}
 }
 
@@ -229,12 +234,12 @@ static void	start(t_philo *forum, char **argv, int argc)
 		return ;
 	sophies = malloc(sizeof(t_philo) * forum->philo_num);
 	if (!sophies)
-		return (void_malloc_failed());
+		return (void_malloc_failed(forum));
 	forks = malloc(sizeof(pthread_mutex_t) * forum->philo_num);
 	if (!forks)
 	{
 		free (sophies);
-		return(void_malloc_failed());
+		return(void_malloc_failed(forum));
 	}
 	if (set_forks(forum, &sophies, forks) == -1)
 		return ;
@@ -242,6 +247,7 @@ static void	start(t_philo *forum, char **argv, int argc)
 	while (++i < forum->philo_num)
 		set_philo(forum, &sophies[i], i, &forks);
 	start_simulation(forum, &sophies, forks);
+	pthread_mutex_destroy(forum->timing);
 	free(sophies);
 	free(forks);
 }

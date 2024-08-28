@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 09:54:30 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/28 15:32:42 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,27 @@ int	mutex_initing(pthread_mutex_t *current)
 	current = &cur;
 	return (0);	
 }
-//change and apply to mutex_initing
-int	mutex_print_eat(t_philo *forum)
+
+int	mutex_print_state(t_philo *forum)
 {
 	pthread_mutex_t	timing;
+	pthread_mutex_t	state;
 
 	if (pthread_mutex_init(&timing, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&timing) != 0)
-			return (1);
+		pthread_mutex_destroy(&timing);
+		return (-1);
 	}
 	forum->timing = &timing;
+	// if (pthread_mutex_init(&state, NULL) != 0)
+	// {
+	// 	printf("Error: initialisation failed.\n");
+	// 	pthread_mutex_destroy(&timing);
+	// 	pthread_mutex_destroy(&state);
+	// 	return (-1);
+	// }
+	// forum->state = &state;
 	return (0);
 }
 
@@ -71,7 +80,7 @@ static int	init_args(int i, int num, t_philo *forum)
 	else if (i == 4)
 		forum->meal_num = num;
 	forum->start_time = get_time();
-	return(mutex_print_eat(forum));
+	return(mutex_print_state(forum));
 }
 
 static int	philo_atoi(char *str, int i, t_philo *forum)
@@ -79,12 +88,12 @@ static int	philo_atoi(char *str, int i, t_philo *forum)
 	int	num;
 
 	num = ft_atoi(str);
-	if (num < 0)
+	if (num <= 0)
 	{
 		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
-	return(init_args(i, num, forum) == 1);
+	return(init_args(i, num, forum));
 }
 
 int	check_args(t_philo *forum, char **argv, int argc)
