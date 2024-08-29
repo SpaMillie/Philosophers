@@ -6,15 +6,18 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/07/30 17:37:17 by mspasic          ###   ########.fr        #
+#    Updated: 2024/08/29 13:15:10 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 SOURCES = main.c \
+		checks.c \
 		handle_args.c \
 		ft_atoi.c \
+		life.c \
+		monitoring.c \
 		timing.c \
 		utils.c
 

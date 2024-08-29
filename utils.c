@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 10:07:39 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 13:09:40 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,18 @@ void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks)
 	free(sophies);
 	free(forks);
 	//check if this works
+}
+
+void	print_out(char *str, t_philo *sopher)
+{
+	size_t	cur_time;
+	cur_time = lock_time(sopher);
+	printf("%lu %d %s\n", cur_time, sopher->philo_num, str);	
+}
+
+void	up_meal_num(t_philo *sopher)
+{
+	pthread_mutex_lock(sopher->meal_lock);
+	sopher->cur_meal++;
+	pthread_mutex_unlock(sopher->meal_lock);
 }

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 10:20:19 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 13:08:39 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 // 	return (-1);
 // }
 
-
-
 int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 {
 	sophy->philo_num = i; //dnt forget that this isnt total philo_num
@@ -28,7 +26,7 @@ int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 		sophy->left_fork = fork[0];
 	else
 		sophy->left_fork = fork[i + 1];
-	sophy->meal_num = frm->meal_num; //make this 0 instead?
+	sophy->meal_num = frm->meal_num;
 	sophy->time_to_sleep = frm->time_to_sleep;
 	sophy->time_to_die = frm->time_to_die;
 	sophy->time_to_eat = frm->time_to_eat;
@@ -36,6 +34,7 @@ int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 	sophy->start = frm->start;
 	sophy->dead = 0;
 	sophy->eating = 0;
+	sophy->cur_meal = 0;
 	if (mutex_initing(sophy->state))
 		return (-1);
  	if (mutex_initing(sophy->meal_lock))
@@ -69,103 +68,27 @@ int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 	return (0);
 }
 
-void	ft_print(char *str, t_philo *cur_ph, int i)
-{
-	size_t	cur_time;
+// void	ft_print(char *str, t_philo *cur_ph, int i)
+// {
+// 	size_t	cur_time;
 
-	cur_time = get_time();
-	pthread_mutex_lock(&cur_ph->timing);
-	printf("%lu philosopher %d %s\n", cur_time - cur_ph->start_time, 
-		cur_ph->philo_num, str);
-	pthread_mutex_unlock(&cur_ph->timing);
-}
+// 	cur_time = get_time();
+// 	pthread_mutex_lock(&cur_ph->timing);
+// 	printf("%lu philosopher %d %s\n", cur_time - cur_ph->start_time, 
+// 		cur_ph->philo_num, str);
+// 	pthread_mutex_unlock(&cur_ph->timing);
+// }
 
-void	death_ensues(t_philo **sophies, int i, int max)
-{
-	int	j;
+// void	death_ensues(t_philo **sophies, int i, int max)
+// {
+// 	int	j;
 
-	j = -1;
-	ft_print("died", sophies[i], i);
-	while (++j < max)
-		sophies[j]->dead = 1;
-}
+// 	j = -1;
+// 	ft_print("died", sophies[i], i);
+// 	while (++j < max)
+// 		sophies[j]->dead = 1;
+// }
 
-int	check_appetite(t_omni *data)
-{
-	int	i;
-
-	i = 0;
-	if (data->forum->meal_num == -2)
-		return (0);
-	while (i < data->forum->philo_num)
-	{
-		if (data->sophies[i]->meal_num)
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-int	check_death(t_omni *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->forum->philo_num)
-	{
-		pthread_mutex_lock(&data->sophies[i]->state);
-		if (data->sophies[i]->dead == 1)
-		{
-			death_ensues(data->sophies, i, \
-				data->forum->philo_num);
-			return (1) ;
-		}
-		pthread_mutex_lock(&data->sophies[i]->state);
-		i++;
-	}
-	return (0);
-}
-
-int	edo(t_philo *sopher)
-{
-
-}
-
-void	eat_first(t_philo *sopher)
-{
-	while (!sopher->dead || sopher->meal_num)
-	{
-		if (edo(sopher))
-			break ;
-		if (cogito(sopher))
-			break ;
-		if (dormio(sopher))
-			break ;
-	}
-}
-
-void	think_first(t_philo *sopher)
-{
-	while (!sopher->dead || sopher->meal_num)
-	{
-		if (cogito(sopher))
-			break ;
-		if (edo(sopher))
-			break ;
-		if (dormio(sopher))
-			break ;
-	}
-}
-
-void	order_up(t_philo *sopher)
-{
-	if (sopher->philo_num == 0 || sopher->philo_num %2 == 0)
-		eat_first(sopher);
-	else
-		think_first(sopher);
-}
-void	order_up(void )
-{}
 
 int	philogenesis(t_omni *data)
 {
@@ -178,12 +101,14 @@ int	philogenesis(t_omni *data)
 	{
 		data->sophies[i]->start_time = data->forum->start_time;
 		if (pthread_create(&data->sophies[i]->thread, NULL, \
-			&order_up, data->sophies[i]) != 0)
+			&life, data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)
 			{
-				data->sophies->
+				pthread_mutex_lock(data->sophies[i]->state);
+				data->sophies[i]->dead = 1;
+				pthread_mutex_unlock(data->sophies[i]->state);
 				pthread_join(data->sophies[i], NULL);
 				pthread_mutex_unlock(data->forum->start);
 			}
@@ -192,21 +117,6 @@ int	philogenesis(t_omni *data)
 	}
 	pthread_mutex_unlock(data->forum->start);
 	return (0);
-}
-
-void	monitoring(t_omni *data)
-{
-	while (1)
-	{
-		if (check_death(data))
-			break ;
-		if (check_appetite(data));
-			break ;
-	}
-	//unlock everything, change flags, destroy mutexes 
-	// check = -1;
-	// while (++check < data->forum->philo_num)
-	// 	pthread_join(data->sophies[check], NULL);
 }
 
 void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 21:12:17 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 10:19:16 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 11:34:59 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,8 @@ size_t  get_time(void)
     return (millisec);
 }
 
-void    ft_usleep(size_t sleep_time)
+void    ft_usleep(size_t sleep_time, size_t start)
 {
-    size_t  start;
-
-    start = get_time();
     while (get_time() - start < sleep_time)
         usleep(500);
 }
