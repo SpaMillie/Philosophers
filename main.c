@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:31:32 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 14:54:54 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
 		{
 			printf("Error: initialisation failed.\n");
-			free(&sophies); //this is probably an issue
+			free(*sophies); //this is probably an issue
 			while (--i > -1)
 				pthread_mutex_destroy(&forks[i]);//if this doesnt work then neither does the other thing 
 			pthread_mutex_destroy(forum->timing);
@@ -98,18 +98,18 @@ static void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk
 	data.forum = frm;
 	data.sophies = sphs;
 	data.forks = frk;
-	if (pthread_create(&frm->thread, NULL, &monitoring, &data) != 0)
+	if (pthread_create(&frm->thread, NULL, &monitoring, (void *)&data) != 0)
 		printf("Error: failed to create the monitoring thread\n");
 	else
 	{
 		if (philogenesis(&data))
 		{
-			pthread_join(&frm->thread, NULL);
+			pthread_join(frm->thread, NULL);
 			return ;
 		}
 		while (++i < data.forum->philo_num)
 				pthread_join(data.sophies[i], NULL);
-		pthread_join(&frm->thread, NULL);
+		pthread_join(frm->thread, NULL);
 	}
 }
 
@@ -136,9 +136,9 @@ static void	start(t_philo *forum, char **argv, int argc)
 	while (++i < forum->philo_num)
 	{
 		if (set_philo(forum, &sophies[i], i, &forks) == -1)
-			return (init_failed(forum, sophies, &forks, i));	
+			return (init_failed(forum, &sophies, &forks, i));	
 	}
-	start_simulation(forum, &sophies, forks);
+	start_simulation(forum, &sophies, &forks);
 	cleanup(forum, &sophies, forks);
 }
 

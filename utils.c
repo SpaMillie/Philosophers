@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:18:15 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 14:43:57 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	void_malloc_failed(t_philo *forum)
 	printf("Error: Malloc failed.\n");
 }
 
-int	init_failed(t_philo *forum, t_philo **sphs, pthread_mutex_t **frks, int i)
+void	init_failed(t_philo *forum, t_philo **sphs, pthread_mutex_t **frks, int i)
 {
 	// printf("Error: initialisation failed.\n");
 	// free(sphs);

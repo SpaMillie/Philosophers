@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:28:28 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:01:43 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void	thinking(t_philo *sopher)
 		ft_usleep(sopher->time_to_eat / 2, sopher->start_time);
 }
 
-static void	life(t_philo *arg)
+static void	*life(void *arg)
 {
     t_philo *sopher;
 
@@ -73,7 +73,7 @@ int	philogenesis(t_omni *data)
 	{
 		data->sophies[i]->start_time = data->forum->start_time;
 		if (pthread_create(&data->sophies[i]->thread, NULL, \
-			&life, data->sophies[i]) != 0)
+			&life, (void *)data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)

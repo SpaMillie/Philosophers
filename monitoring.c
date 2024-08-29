@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 13:42:53 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:00:22 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static int	who_ate(t_omni *data)
 	return (0);
 }
 
-void	monitoring(t_omni *arg)
+void	*monitoring(void *arg)
 {
     t_omni  *data;
 

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:18:51 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 15:02:54 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct s_omni
 //main.c
 //handle_args.c
 int		digit_finder(char *str);
+// int		mutex_print_state(t_philo *forum);
 int		check_args(t_philo *forum, char **argv, int argc);
 //ft_atoi.c
 int     ft_atoi(const char *str);
@@ -66,11 +67,12 @@ size_t	get_time(void);
 size_t  lock_time(t_philo *forum);
 //utils.c
 void	void_malloc_failed(t_philo *forum);
-int		init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t **frks, int i);
+void	init_failed(t_philo *forum, t_philo **sphs, pthread_mutex_t **frks, int i);
 void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 void	up_meal_num(t_philo *sopher);
 //checks.c
+int		mutex_initing(pthread_mutex_t *current);
 int		check_state(t_philo *sopher);
 int		check_meal_num(t_philo *sopher);
 // int		check_appetite(t_omni *data);
@@ -84,6 +86,6 @@ int		philogenesis(t_omni *data);
 //monitoring.c
 // int		who_died(t_omni *data);
 // int		who_ate(t_omni *data);
-void	monitoring(t_omni *data);
+void	*monitoring(void *data);
 
 #endif
