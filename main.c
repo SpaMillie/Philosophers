@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:54:54 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:35:15 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 // 	return (-1);
 // }
 
-static int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
+static int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t *fork)
 {
 	sophy->philo_num = i; //dnt forget that this isnt total philo_num
-	sophy->right_fork = fork[i];
+	sophy->right_fork = &fork[i];
 	if (i == frm->philo_num - 1)
-		sophy->left_fork = fork[0];
+		sophy->left_fork = &fork[0];
 	else
-		sophy->left_fork = fork[i + 1];
+		sophy->left_fork = &fork[i + 1];
 	sophy->meal_num = frm->meal_num;
 	sophy->time_to_sleep = frm->time_to_sleep;
 	sophy->time_to_die = frm->time_to_die;
@@ -46,7 +46,7 @@ static int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork
 	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
 }
 
-static int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
+static int	set_forks(t_philo *forum, t_philo *sophies, pthread_mutex_t *forks)
 {
 	int	i;
 
@@ -56,7 +56,7 @@ static int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
 		{
 			printf("Error: initialisation failed.\n");
-			free(*sophies); //this is probably an issue
+			free(sophies); //this is probably an issue
 			while (--i > -1)
 				pthread_mutex_destroy(&forks[i]);//if this doesnt work then neither does the other thing 
 			pthread_mutex_destroy(forum->timing);
@@ -89,7 +89,7 @@ static int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 // 		sophies[j]->dead = 1;
 // }
 
-static void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
+static void	start_simulation(t_philo *frm, t_philo *sphs, pthread_mutex_t *frk)
 {
 	t_omni	data;
 	int		i;
@@ -98,6 +98,8 @@ static void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk
 	data.forum = frm;
 	data.sophies = sphs;
 	data.forks = frk;
+	data.can_go = 0;
+	printf("entered start_ssimulatin\n");
 	if (pthread_create(&frm->thread, NULL, &monitoring, (void *)&data) != 0)
 		printf("Error: failed to create the monitoring thread\n");
 	else
@@ -107,8 +109,9 @@ static void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk
 			pthread_join(frm->thread, NULL);
 			return ;
 		}
-		while (++i < data.forum->philo_num)
-				pthread_join(data.sophies[i], NULL);
+		printf("exited philogenisis\n");
+		while (++i < frm->philo_num)
+				pthread_join(sphs[i].thread, NULL);
 		pthread_join(frm->thread, NULL);
 	}
 }
@@ -130,16 +133,16 @@ static void	start(t_philo *forum, char **argv, int argc)
 		free (sophies);
 		return(void_malloc_failed(forum));
 	}
-	if (set_forks(forum, &sophies, forks) == -1)
+	if (set_forks(forum, sophies, forks) == -1)
 		return ;
 	i = -1;
 	while (++i < forum->philo_num)
 	{
-		if (set_philo(forum, &sophies[i], i, &forks) == -1)
-			return (init_failed(forum, &sophies, &forks, i));	
+		if (set_philo(forum, &sophies[i], i, forks) == -1)
+			return (init_failed(forum, sophies, forks, i));	
 	}
-	start_simulation(forum, &sophies, &forks);
-	cleanup(forum, &sophies, forks);
+	start_simulation(forum, sophies, forks);
+	cleanup(forum, sophies, forks);
 }
 
 int	main(int argc, char **argv)

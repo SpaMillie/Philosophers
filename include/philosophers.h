@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 15:02:54 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:26:05 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,9 @@ typedef struct	s_philo
 typedef struct s_omni
 {
 	t_philo *forum;
-	t_philo **sophies;
-	pthread_mutex_t	**forks;
+	t_philo *sophies;
+	pthread_mutex_t	*forks;
+	int	can_go;
 }	t_omni;
 
 /*	ALL (NON-STATIC) FUNCTIONS	*/        //ALSO YOU NEED TO MAKE THEM STATIC IF THEY NEED TO BE STATIC
@@ -67,8 +68,8 @@ size_t	get_time(void);
 size_t  lock_time(t_philo *forum);
 //utils.c
 void	void_malloc_failed(t_philo *forum);
-void	init_failed(t_philo *forum, t_philo **sphs, pthread_mutex_t **frks, int i);
-void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks);
+void	init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t *frks, int i);
+void	cleanup(t_philo	*forum, t_philo	*sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 void	up_meal_num(t_philo *sopher);
 //checks.c

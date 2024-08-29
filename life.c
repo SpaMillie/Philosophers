@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 15:01:43 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:40:04 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,16 @@ int	philogenesis(t_omni *data)
 	int	i;
 
 	i = -1;
+	printf("entered philogenesis\n");
 	pthread_mutex_lock(data->forum->start);
 	data->forum->start_time = lock_time(data->forum); 
+	printf("good philogenesis\n");
 	while (++i < data->forum->philo_num)
 	{
-		data->sophies[i]->start_time = data->forum->start_time;
-		if (pthread_create(&data->sophies[i]->thread, NULL, \
-			&life, (void *)data->sophies[i]) != 0)
+		data->sophies[i].start_time = data->forum->start_time;
+        printf("start time is %lu\n", data->sophies[i].start_time);
+		if (pthread_create(&data->sophies[i].thread, NULL, \
+			&life, (void *)&data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)
@@ -82,12 +85,15 @@ int	philogenesis(t_omni *data)
 				// pthread_mutex_lock(data->sophies[i]->state);
 				// data->sophies[i]->dead = 1;
 				// pthread_mutex_unlock(data->sophies[i]->state);
-				pthread_join(data->sophies[i], NULL);
+				pthread_join(data->sophies[i].thread, NULL);
 			}
+            data->can_go = 1;
 			pthread_mutex_unlock(data->forum->start);
 			return (1);
 		}
 	}
+    printf("every thread created\n");
+    data->can_go = 1;
 	pthread_mutex_unlock(data->forum->start);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:43:57 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 16:08:54 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,31 +19,31 @@ void	void_malloc_failed(t_philo *forum)
 	printf("Error: Malloc failed.\n");
 }
 
-void	init_failed(t_philo *forum, t_philo **sphs, pthread_mutex_t **frks, int i)
+void	init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t *frks, int i)
 {
 	// printf("Error: initialisation failed.\n");
 	// free(sphs);
 	while (--i > -1)
 	{
-		pthread_mutex_destroy(sphs[i]->state);
-		pthread_mutex_destroy(sphs[i]->meal_lock);
-		free(sphs[i]);
+		pthread_mutex_destroy(sphs[i].state);
+		pthread_mutex_destroy(sphs[i].meal_lock);
 	}
+	free(sphs);
 	i = -1;
 	while (++i < forum->philo_num)
-		pthread_mutex_destroy(frks[i]);
+		pthread_mutex_destroy(&frks[i]);
 	free(frks);
 	pthread_mutex_destroy(forum->start);
 	pthread_mutex_destroy(forum->timing);
 }
 
-void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks)
+void	cleanup(t_philo	*forum, t_philo	*sophies, pthread_mutex_t *forks)
 {
 	int	i;
 
 	i = 0;
 	while (i < forum->philo_num)
-		pthread_mutex_destroy(&forks[i++]); //if this doesnt work then neither does the other thing
+		pthread_mutex_destroy(&forks[i++]); 
 	pthread_mutex_destroy(forum->timing);
 	pthread_mutex_destroy(forum->start);
 	free(sophies);
