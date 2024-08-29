@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 13:08:39 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 14:31:32 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 // 	return (-1);
 // }
 
-int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
+static int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 {
 	sophy->philo_num = i; //dnt forget that this isnt total philo_num
 	sophy->right_fork = fork[i];
@@ -46,7 +46,7 @@ int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
 }
 
-int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
+static int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 {
 	int	i;
 
@@ -89,37 +89,7 @@ int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 // 		sophies[j]->dead = 1;
 // }
 
-
-int	philogenesis(t_omni *data)
-{
-	int	i;
-
-	i = -1;
-	pthread_mutex_lock(data->forum->start);
-	data->forum->start_time = lock_time(data->forum); 
-	while (++i < data->forum->philo_num)
-	{
-		data->sophies[i]->start_time = data->forum->start_time;
-		if (pthread_create(&data->sophies[i]->thread, NULL, \
-			&life, data->sophies[i]) != 0)
-		{
-			printf("Error: philogenesis failed\n");
-			while (--i > -1)
-			{
-				pthread_mutex_lock(data->sophies[i]->state);
-				data->sophies[i]->dead = 1;
-				pthread_mutex_unlock(data->sophies[i]->state);
-				pthread_join(data->sophies[i], NULL);
-				pthread_mutex_unlock(data->forum->start);
-			}
-			return (1);
-		}
-	}
-	pthread_mutex_unlock(data->forum->start);
-	return (0);
-}
-
-void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
+static void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 {
 	t_omni	data;
 	int		i;
@@ -132,15 +102,14 @@ void	start_simulation(t_philo *frm, t_philo **sphs, pthread_mutex_t **frk)
 		printf("Error: failed to create the monitoring thread\n");
 	else
 	{
-		if (!philogenesis(&data))
+		if (philogenesis(&data))
 		{
-			while (++i < data.forum->philo_num)
-				pthread_join(data.sophies[i], NULL);
+			pthread_join(&frm->thread, NULL);
+			return ;
 		}
+		while (++i < data.forum->philo_num)
+				pthread_join(data.sophies[i], NULL);
 		pthread_join(&frm->thread, NULL);
-		i = -1;	
-		while (++i > data.forum->philo_num) 
-			pthread_mutex_destroy(data.forks[i]);
 	}
 }
 

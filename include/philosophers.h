@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 13:15:20 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 14:18:51 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ size_t  lock_time(t_philo *forum);
 void	void_malloc_failed(t_philo *forum);
 int		init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t **frks, int i);
 void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks);
-void	print_out(char *str, t_philo *sopher);
+size_t	print_out(char *str, t_philo *sopher);
 void	up_meal_num(t_philo *sopher);
 //checks.c
 int		check_state(t_philo *sopher);
@@ -76,14 +76,14 @@ int		check_meal_num(t_philo *sopher);
 // int		check_appetite(t_omni *data);
 // int		check_death(t_omni *data);
 //life.c
-void    eating(t_philo  *sophie);
-void	sleeping(t_philo *sopher);
-void	thinking(t_philo *sopher);
-void	life(t_philo *sopher);
+// void    eating(t_philo  *sophie);
+// void	sleeping(t_philo *sopher);
+// void	thinking(t_philo *sopher);
+// void	life(t_philo *sopher);
 int		philogenesis(t_omni *data);
 //monitoring.c
-int		who_died(t_omni *data);
-int		who_ate(t_omni *data);
+// int		who_died(t_omni *data);
+// int		who_ate(t_omni *data);
 void	monitoring(t_omni *data);
 
 #endif

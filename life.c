@@ -6,25 +6,38 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 13:10:47 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 14:28:28 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
 
-
-void    eating(t_philo  *sophie)
+static void    eating(t_philo  *sopher)
 {
-//add this
+    pthread_mutex_lock(sopher->left_fork); 
+   	pthread_mutex_lock(sopher->right_fork);
+   	pthread_mutex_lock(sopher->meal_lock);
+    sopher->last_ate = print_out("is eating", sopher);
+    while(get_time() - sopher->last_ate < sopher->time_to_eat)
+    {
+        if (get_time() - sopher->last_ate < sopher->time_to_die)
+            break ;
+        else
+            ft_usleep(100, sopher->last_ate); 
+    }
+    sopher->meal_num++;
+	pthread_mutex_unlock(sopher->meal_lock); 
+    pthread_mutex_unlock(sopher->left_fork); 
+   	pthread_mutex_unlock(sopher->right_fork);
 }
 
-void	sleeping(t_philo *sopher)
+static void	sleeping(t_philo *sopher)
 {
 	print_out("is sleeping", sopher);
 	ft_usleep(sopher->time_to_sleep, sopher->start_time);
 }
 
-void	thinking(t_philo *sopher)
+static void	thinking(t_philo *sopher)
 {
 	print_out("is thinking", sopher);
 	if ((sopher->philo_num == 0 || \
@@ -32,9 +45,12 @@ void	thinking(t_philo *sopher)
 		ft_usleep(sopher->time_to_eat / 2, sopher->start_time);
 }
 
-void	life(t_philo *sopher)
+static void	life(t_philo *arg)
 {
-	pthread_mutex_lock(sopher->start);
+    t_philo *sopher;
+
+    sopher = (t_philo *)arg;
+	pthread_mutex_lock(sopher->start); 
 	pthread_mutex_unlock(sopher->start);
 	while(!check_state)
 		{
@@ -62,12 +78,13 @@ int	philogenesis(t_omni *data)
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)
 			{
-				pthread_mutex_lock(data->sophies[i]->state);
-				data->sophies[i]->dead = 1;
-				pthread_mutex_unlock(data->sophies[i]->state);
+                //not needed?
+				// pthread_mutex_lock(data->sophies[i]->state);
+				// data->sophies[i]->dead = 1;
+				// pthread_mutex_unlock(data->sophies[i]->state);
 				pthread_join(data->sophies[i], NULL);
-				pthread_mutex_unlock(data->forum->start);
 			}
+			pthread_mutex_unlock(data->forum->start);
 			return (1);
 		}
 	}

@@ -6,13 +6,26 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 13:13:02 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 13:42:53 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
 
-int	who_died(t_omni *data)
+static void    kill_everyone(t_omni *data)
+{
+    int i;
+
+    i = -1;
+	while (++i < data->forum->philo_num)
+	{
+		pthread_mutex_lock(data->sophies[i]->state);
+		data->sophies[i]->dead = 1;
+		pthread_mutex_unlock(data->sophies[i]->state);
+    }
+}
+
+static int	who_died(t_omni *data)
 {
 	int	i;
 
@@ -33,7 +46,7 @@ int	who_died(t_omni *data)
 	return (0);
 }
 
-int	who_ate(t_omni *data)
+static int	who_ate(t_omni *data)
 {
 	int	i;
 
@@ -41,9 +54,11 @@ int	who_ate(t_omni *data)
 	while (++i < data->forum->philo_num)
 	{
 		pthread_mutex_lock(data->sophies[i]->meal_lock);
-		if (get_time() - data->forum->start_time > data->forum->time_to_die)
+		if (data->sophies[i]->cur_meal == data->forum->meal_num)
 		{
+			pthread_mutex_lock(data->sophies[i]->state);
 			data->sophies[i]->dead = 1;
+			pthread_mutex_unlock(data->sophies[i]->state);
 			pthread_mutex_unlock(data->sophies[i]->meal_lock);
 			kill_everyone(data);
 			return (1);
@@ -53,8 +68,11 @@ int	who_ate(t_omni *data)
 	return (0);
 }
 
-void	monitoring(t_omni *data)
+void	monitoring(t_omni *arg)
 {
+    t_omni  *data;
+
+    data = (t_omni *)arg;
 	while (1)
 	{
 		if (who_died(data))
@@ -62,9 +80,4 @@ void	monitoring(t_omni *data)
 		if (who_ate(data));
 			break ;
 	}
-
-	//unlock everything, change flags, destroy mutexes 
-	// check = -1;
-	// while (++check < data->forum->philo_num)
-	// 	pthread_join(data->sophies[check], NULL);
 }
