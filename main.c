@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 10:03:03 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 10:20:19 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,18 +172,26 @@ int	philogenesis(t_omni *data)
 	int	i;
 
 	i = -1;
+	pthread_mutex_lock(data->forum->start);
+	data->forum->start_time = lock_time(data->forum); 
 	while (++i < data->forum->philo_num)
 	{
+		data->sophies[i]->start_time = data->forum->start_time;
 		if (pthread_create(&data->sophies[i]->thread, NULL, \
 			&order_up, data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)
+			{
+				data->sophies->
 				pthread_join(data->sophies[i], NULL);
+				pthread_mutex_unlock(data->forum->start);
+			}
 			return (1);
 		}
-		return (0);
 	}
+	pthread_mutex_unlock(data->forum->start);
+	return (0);
 }
 
 void	monitoring(t_omni *data)
