@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 18:14:29 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 10:02:07 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ int	mutex_initing(pthread_mutex_t *current)
 	if (pthread_mutex_init(&cur, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		if (destroy_mut(&cur) != 0)
-			return (1);
+		pthread_mutex_destroy(&cur);
+		return (1);
 	}
 	current = &cur;
 	return (0);	
@@ -44,7 +44,7 @@ int	mutex_initing(pthread_mutex_t *current)
 int	mutex_print_state(t_philo *forum)
 {
 	pthread_mutex_t	timing;
-	pthread_mutex_t	state;
+	pthread_mutex_t	start;
 
 	if (pthread_mutex_init(&timing, NULL) != 0)
 	{
@@ -53,14 +53,14 @@ int	mutex_print_state(t_philo *forum)
 		return (-1);
 	}
 	forum->timing = &timing;
-	// if (pthread_mutex_init(&state, NULL) != 0)
-	// {
-	// 	printf("Error: initialisation failed.\n");
-	// 	pthread_mutex_destroy(&timing);
-	// 	pthread_mutex_destroy(&state);
-	// 	return (-1);
-	// }
-	// forum->state = &state;
+	if (pthread_mutex_init(&start, NULL) != 0)
+	{
+		printf("Error: initialisation failed.\n");
+		pthread_mutex_destroy(&timing);
+		pthread_mutex_destroy(&start);
+		return (-1);
+	}
+	forum->start = &start;
 	return (0);
 }
 
@@ -79,7 +79,7 @@ static int	init_args(int i, int num, t_philo *forum)
 	}
 	else if (i == 4)
 		forum->meal_num = num;
-	forum->start_time = get_time();
+	// forum->start_time = get_time(); strt time when you start
 	return(mutex_print_state(forum));
 }
 

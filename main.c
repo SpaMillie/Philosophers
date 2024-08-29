@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 18:08:53 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 10:03:03 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,25 @@
 
 int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t **fork)
 {
-	pthread_mutex_t	state;
-
 	sophy->philo_num = i; //dnt forget that this isnt total philo_num
 	sophy->right_fork = fork[i];
 	if (i == frm->philo_num - 1)
 		sophy->left_fork = fork[0];
 	else
 		sophy->left_fork = fork[i + 1];
-	sophy->meal_num = frm->meal_num;
+	sophy->meal_num = frm->meal_num; //make this 0 instead?
 	sophy->time_to_sleep = frm->time_to_sleep;
 	sophy->time_to_die = frm->time_to_die;
 	sophy->time_to_eat = frm->time_to_eat;
 	sophy->timing = frm->timing;
-	sophy->begin = frm->begin;
+	sophy->start = frm->start;
 	sophy->dead = 0;
-	if (pthread_mutex_init(&state, NULL) != 0)
+	sophy->eating = 0;
+	if (mutex_initing(sophy->state))
+		return (-1);
+ 	if (mutex_initing(sophy->meal_lock))
 	{
-		printf("Error: initialisation failed.\n");
-		pthread_mutex_destroy(&state);
+		pthread_mutex_destroy(sophy->state);
 		return (-1);
 	}
 	return (0);
@@ -59,8 +59,9 @@ int	set_forks(t_philo *forum, t_philo **sophies, pthread_mutex_t *forks)
 			printf("Error: initialisation failed.\n");
 			free(&sophies); //this is probably an issue
 			while (--i > -1)
-				pthread_mutex_destroy(&forks[i]);
+				pthread_mutex_destroy(&forks[i]);//if this doesnt work then neither does the other thing 
 			pthread_mutex_destroy(forum->timing);
+			pthread_mutex_destroy(forum->start);
 			return (-1);
 		}
 			// return (init_failed(forum, *sophies, &forks, i));

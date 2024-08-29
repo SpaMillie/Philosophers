@@ -6,9 +6,13 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 18:01:57 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/29 09:45:56 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+//dont forget to remove fsanitize and put everything in a philo directory
+
 
 #ifndef PHILO_H
 # define PHILO_H
@@ -21,12 +25,12 @@
 typedef struct	s_philo
 {
 	int	philo_num;
-	int	time_to_die; //can this be 0?
-	int	time_to_eat;//can this be 0?
-	int	time_to_sleep;//this can probably be 0
-	int	meal_num;//this can probably be 0
+	int	time_to_die; 
+	int	time_to_eat;
+	int	time_to_sleep;
+	int	meal_num;
 	int	dead; //flag for state
-	int	eating;
+	int	eating; //for meal num change flag
 	size_t start_time;
 	size_t cur_time;
 	size_t last_ate;
@@ -35,8 +39,8 @@ typedef struct	s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*timing;
 	pthread_mutex_t	*state; //init
-	pthread_mutex_t	*begin;
-	pthread_mutex_t	*meal_check;
+	pthread_mutex_t	*start;
+	pthread_mutex_t	*meal_lock;
 }	t_philo;
 
 typedef struct s_omni
@@ -59,5 +63,6 @@ size_t	get_time(void);
 //utils.c
 void	void_malloc_failed(t_philo *forum);
 int		init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t **frks, int i);
+void	cleanup(t_philo	*forum, t_philo	**sophies, pthread_mutex_t *forks);
 
 #endif
