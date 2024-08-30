@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 15:03:24 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 17:00:05 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	*monitoring(void *arg)
 	printf("here left\n");
 	while (1)
 	{
+		printf("checking\n");
 		if (who_died(data))
 			break ;
 		if (who_ate(data));

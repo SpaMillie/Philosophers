@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 15:02:43 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 17:07:42 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,20 @@ static void	*life(void *arg)
 
     sopher = (t_philo *)arg;
 	printf("%d has been born\n", sopher->philo_num);
-	pthread_mutex_lock(sopher->start); 
+	pthread_mutex_lock(sopher->start);
+	printf("philo locked the start\n"); 
 	pthread_mutex_unlock(sopher->start);
+	printf("philo unlocked the start\n");
+	printf("%d\n", check_state(sopher)); 
 	while(!check_state)
-		{
-			thinking(sopher);
-			if (!check_state)
-				eating(sopher);
-			if (!check_state)
-				sleeping(sopher);
-		}
+	{
+		printf("life started\n");
+		thinking(sopher);
+		if (!check_state)
+			eating(sopher);
+		if (!check_state)
+			sleeping(sopher);
+	}
 }
 
 int	philogenesis(t_omni *data)
@@ -76,19 +80,13 @@ int	philogenesis(t_omni *data)
 	while (++i < data->tor->philo_num)
 	{
 		data->sophies[i].start_time = data->tor->start_time;
-        printf("start time is %lu\n", data->sophies[i].start_time);
-		if (pthread_create(&data->sophies[i].thread, NULL, \
+        printf("philo is %d and start time is %lu\n", data->sophies[i].philo_num, data->sophies[i].start_time);
+		if (pthread_create(&(data->sophies[i].thread), NULL, \
 			&life, (void *)&data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
 			while (--i > -1)
-			{
-                //not needed?
-				// pthread_mutex_lock(&data->sophies[i]->state);
-				// data->sophies[i]->dead = 1;
-				// pthread_mutex_unlock(&data->sophies[i]->state);
 				pthread_join(data->sophies[i].thread, NULL);
-			}
             data->can_go = 1;
 			pthread_mutex_unlock(&data->tor->start);
 			return (1);
@@ -96,6 +94,8 @@ int	philogenesis(t_omni *data)
 	}
     printf("every thread created\n");
     data->can_go = 1;
+	printf("data is now %d\n", data->can_go);
 	pthread_mutex_unlock(&data->tor->start);
+	printf("start unlocked\n");
 	return (0);
 }

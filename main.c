@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 15:09:50 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 16:58:29 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,50 +18,50 @@
 // 	return (-1);
 // }
 
-static int	set_philo(t_moni *tor, t_philo sophy, int i, pthread_mutex_t *fork)
+static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 {
-	sophy.philo_num = i; //dnt forget that this isnt total philo_num
-	sophy.right_fork = &fork[i];
-	// pthread_mutex_lock(sophy.right_fork);
+	sophy->philo_num = i; //dnt forget that this isnt total philo_num
+	sophy->right_fork = &fork[i];
+	// pthread_mutex_lock(sophy->right_fork);
 	// printf("checking if the right fork can be locked\n");
-	// pthread_mutex_unlock(sophy.right_fork);
+	// pthread_mutex_unlock(sophy->right_fork);
 	if (i == tor->philo_num - 1)
-		sophy.left_fork = &fork[0];
+		sophy->left_fork = &fork[0];
 	else
-		sophy.left_fork = &fork[i + 1];
-	// pthread_mutex_lock(sophy.left_fork);
+		sophy->left_fork = &fork[i + 1];
+	// pthread_mutex_lock(sophy->left_fork);
 	// printf("checking if the left fork can be locked\n");
-	// pthread_mutex_unlock(sophy.left_fork);
-	sophy.meal_num = tor->meal_num;
-	sophy.time_to_sleep = tor->time_to_sleep;
-	sophy.time_to_die = tor->time_to_die;
-	sophy.time_to_eat = tor->time_to_eat;
-	sophy.timing = &tor->timing;
+	// pthread_mutex_unlock(sophy->left_fork);
+	sophy->meal_num = tor->meal_num;
+	sophy->time_to_sleep = tor->time_to_sleep;
+	sophy->time_to_die = tor->time_to_die;
+	sophy->time_to_eat = tor->time_to_eat;
+	sophy->timing = &tor->timing;
 	// pthread_mutex_lock(&tor->timing);
 	// printf("checking if the tor timing can be locked\n");
 	// pthread_mutex_unlock(&tor->timing); 	
-	// pthread_mutex_lock(sophy.timing);
+	// pthread_mutex_lock(sophy->timing);
 	// printf("checking if the timing can be locked\n");
-	// pthread_mutex_unlock(sophy.timing);
-	sophy.start = &tor->start;
+	// pthread_mutex_unlock(sophy->timing);
+	sophy->start = &tor->start;
 	// pthread_mutex_lock(&tor->start);
 	// printf("checking if the tor start can be locked\n");
 	// pthread_mutex_unlock(&tor->start); 	
-	// pthread_mutex_lock(sophy.start);
+	// pthread_mutex_lock(sophy->start);
 	// printf("checking if the start can be locked\n");
-	// pthread_mutex_unlock(sophy.start);	
-	sophy.dead = 0;
-	sophy.eating = 0;
-	sophy.cur_meal = 0;
-	if (mutex_initing(&sophy) == -1)
+	// pthread_mutex_unlock(sophy->start);	
+	sophy->dead = 0;
+	sophy->eating = 0;
+	sophy->cur_meal = 0;
+	if (mutex_initing(sophy) == -1)
 		return (-1);
-	printf("checking %d\n", sophy.philo_num);
- 	// pthread_mutex_lock(&sophy.state);
+	printf("checking %d\n", sophy->philo_num);
+ 	// pthread_mutex_lock(&sophy->state);
 	// printf("checking if the state can be locked\n");
-	// pthread_mutex_unlock(&sophy.state);
- 	// pthread_mutex_lock(&sophy.meal_lock);
+	// pthread_mutex_unlock(&sophy->state);
+ 	// pthread_mutex_lock(&sophy->meal_lock);
 	// printf("checking if the meal_lock can be locked\n");
-	// pthread_mutex_unlock(&sophy.meal_lock); 	
+	// pthread_mutex_unlock(&sophy->meal_lock); 	
 	return (0);
 }
 
@@ -121,6 +121,7 @@ static void	start_simulation(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk)
 	data.sophies = sphs;
 	data.forks = frk;
 	data.can_go = 0;
+	printf("first num is %d and second is %d\n", sphs[0].philo_num, data.sophies[0].philo_num);
 	printf("entered start_ssimulatin\n");
 	if (pthread_create(&tor->thread, NULL, &monitoring, (void *)&data) != 0)
 		printf("Error: failed to create the monitoring thread\n");
@@ -164,8 +165,9 @@ static void	start(t_moni *tor, char **argv, int argc)
 	i = -1;
 	while (++i < tor->philo_num)
 	{
-		if (set_philo(tor, sophies[i], i, forks) == -1) //check if it cleans up nicely
-			return (init_failed(tor, sophies, forks, i));	
+		if (set_philo(tor, &sophies[i], i, forks) == -1) //check if it cleans up nicely
+			return (init_failed(tor, sophies, forks, i));
+		printf("is it here %d\n", sophies[i].philo_num);	
 	}
 	start_simulation(tor, sophies, forks);
 	cleanup(tor, sophies, forks);
