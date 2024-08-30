@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 10:09:21 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:04:47 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,56 +28,51 @@ int	digit_finder(char *str)
 	return (0);
 }
 
-static int	mutex_print_state(t_philo *forum)
+static int	mutex_print_state(t_moni *tor)
 {
-	pthread_mutex_t	timing;
-	pthread_mutex_t	start;
-
-	if (pthread_mutex_init(&timing, NULL) != 0)
+	if (pthread_mutex_init(&tor->timing, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		pthread_mutex_destroy(&timing);
+		pthread_mutex_destroy(&tor->timing);
 		return (-1);
 	}
-	forum->timing = &timing;
-	// pthread_mutex_lock(forum->timing);
+	// pthread_mutex_lock(&tor->timing);
 	// printf("locked timing\n");
-	// pthread_mutex_unlock(forum->timing);
+	// pthread_mutex_unlock(&tor->timing);
 	// printf("unlocked timing\n");
-	if (pthread_mutex_init(&start, NULL) != 0)
+	if (pthread_mutex_init(&tor->start, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		pthread_mutex_destroy(&timing);
-		pthread_mutex_destroy(&start);
+		pthread_mutex_destroy(&tor->timing);
+		pthread_mutex_destroy(&tor->start);
 		return (-1);
 	}
-	forum->start = &start;
-	// pthread_mutex_lock(forum->start);
+	// pthread_mutex_lock(&tor->start);
 	// printf("locked start check\n");
-	// pthread_mutex_unlock(forum->start);
+	// pthread_mutex_unlock(&tor->start);
 	// printf("unlocked start\n");
 	return (0);
 }
 
-static void	init_args(int i, int num, t_philo *forum)
+static void	init_args(int i, int num, t_moni *tor)
 {
 	if (i == 0)
-		forum->philo_num = num;
+		tor->philo_num = num;
 	else if (i == 1)
-		forum->time_to_die = num;
+		tor->time_to_die = num;
 	else if (i == 2)
-		forum->time_to_eat = num;
+		tor->time_to_eat = num;
 	else if (i == 3)
 	{
-		forum->time_to_sleep = num;
-		forum->meal_num = -2;
+		tor->time_to_sleep = num;
+		tor->meal_num = -2;
 	}
 	else if (i == 4)
-		forum->meal_num = num;
-	// forum->start_time = get_time(); strt time when you start
+		tor->meal_num = num;
+	// tor->start_time = get_time(); strt time when you start
 }
 
-static int	philo_atoi(char *str, int i, t_philo *forum)
+static int	philo_atoi(char *str, int i, t_moni *tor)
 {
 	int	num;
 
@@ -87,22 +82,22 @@ static int	philo_atoi(char *str, int i, t_philo *forum)
 		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
-	init_args(i, num, forum);
+	init_args(i, num, tor);
 	return(0);
 }
 
-int	check_args(t_philo *forum, char **argv, int argc)
+int	check_args(t_moni *tor, char **argv, int argc)
 {
 	int	i;
 
 	i = -1;
 	while (++i < argc - 1)
 	{
-		if (philo_atoi(argv[i], i, forum) == -1)
+		if (philo_atoi(argv[i], i, tor) == -1)
 			return (-1);
 	}
-	// printf("args are %d %d %d and %d and maybe %d\n", forum->philo_num, forum->time_to_die, forum->time_to_eat, forum->time_to_sleep, forum->meal_num);
-	if (mutex_print_state(forum) != 0)
+	// printf("args are %d %d %d and %d and maybe %d\n", tor->philo_num, tor->time_to_die, tor->time_to_eat, tor->time_to_sleep, tor->meal_num);
+	if (mutex_print_state(tor) != 0)
 		return (-1);
 	return (0);
 }

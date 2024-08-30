@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 09:39:11 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 14:59:57 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,19 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+
+typedef struct	s_moni
+{
+	int	philo_num;
+	int	time_to_die; 
+	int	time_to_eat;
+	int	time_to_sleep;
+	int	meal_num;
+	size_t start_time;
+	pthread_t	thread;
+	pthread_mutex_t	timing;
+	pthread_mutex_t	start;
+}	t_moni;
 
 typedef struct	s_philo
 {
@@ -41,13 +54,13 @@ typedef struct	s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*timing;
 	pthread_mutex_t	*start;
-	pthread_mutex_t	*state; //init
-	pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	state; //init
+	pthread_mutex_t	meal_lock;
 }	t_philo;
 
 typedef struct s_omni
 {
-	t_philo *forum;
+	t_moni	*tor;
 	t_philo *sophies;
 	pthread_mutex_t	*forks;
 	int	can_go;
@@ -58,22 +71,22 @@ typedef struct s_omni
 //main.c
 //handle_args.c
 int		digit_finder(char *str);
-// int		mutex_print_state(t_philo *forum);
-int		check_args(t_philo *forum, char **argv, int argc);
+// int		mutex_print_state(t_moni *tor);
+int		check_args(t_moni *tor, char **argv, int argc);
 //ft_atoi.c
 int     ft_atoi(const char *str);
 //timing.c
 void    ft_usleep(size_t sleep_time, size_t start);
 size_t	get_time(void);
-size_t  lock_time(t_philo *forum);
+size_t  lock_time(pthread_mutex_t *cur);
 //utils.c
-void	void_malloc_failed(t_philo *forum);
-void	init_failed(t_philo *forum, t_philo *sphs, pthread_mutex_t *frks, int i);
-void	cleanup(t_philo	*forum, t_philo	*sophies, pthread_mutex_t *forks);
-size_t	print_out(char *str, t_philo *sopher);
+void	void_malloc_failed(t_moni *tor);
+void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
+void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
+size_t	print_out(char *str, pthread_mutex_t *cur, int id);
 void	up_meal_num(t_philo *sopher);
 //checks.c
-pthread_mutex_t		*mutex_initing(void);
+int		mutex_initing(t_philo *sophy);
 int		check_state(t_philo *sopher);
 int		check_meal_num(t_philo *sopher);
 // int		check_appetite(t_omni *data);
