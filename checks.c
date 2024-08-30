@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:48:09 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 14:36:12 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 09:42:54 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,22 @@
 // 	return (0);
 // }
 
-int	mutex_initing(pthread_mutex_t *current)
+pthread_mutex_t	*mutex_initing(void)
 {
 	pthread_mutex_t	cur;
+	pthread_mutex_t	*current;
 
 	if (pthread_mutex_init(&cur, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
 		pthread_mutex_destroy(&cur);
-		return (1);
+		return (NULL);
 	}
+	pthread_mutex_lock(&cur);
+	printf("locked the current mutex\n");
+	pthread_mutex_unlock(&cur);
 	current = &cur;
-	return (0);	
+	return (current);
 }
 
 int	check_meal_num(t_philo *sopher)

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 15:21:08 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 10:09:21 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,10 @@ static int	mutex_print_state(t_philo *forum)
 		return (-1);
 	}
 	forum->timing = &timing;
+	// pthread_mutex_lock(forum->timing);
+	// printf("locked timing\n");
+	// pthread_mutex_unlock(forum->timing);
+	// printf("unlocked timing\n");
 	if (pthread_mutex_init(&start, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
@@ -48,10 +52,14 @@ static int	mutex_print_state(t_philo *forum)
 		return (-1);
 	}
 	forum->start = &start;
+	// pthread_mutex_lock(forum->start);
+	// printf("locked start check\n");
+	// pthread_mutex_unlock(forum->start);
+	// printf("unlocked start\n");
 	return (0);
 }
 
-static int	init_args(int i, int num, t_philo *forum)
+static void	init_args(int i, int num, t_philo *forum)
 {
 	if (i == 0)
 		forum->philo_num = num;
@@ -67,7 +75,6 @@ static int	init_args(int i, int num, t_philo *forum)
 	else if (i == 4)
 		forum->meal_num = num;
 	// forum->start_time = get_time(); strt time when you start
-	return(mutex_print_state(forum));
 }
 
 static int	philo_atoi(char *str, int i, t_philo *forum)
@@ -80,7 +87,8 @@ static int	philo_atoi(char *str, int i, t_philo *forum)
 		printf("Error: Arguments contain unacceptable numbers.\n");
 		return (-1);
 	}
-	return(init_args(i, num, forum));
+	init_args(i, num, forum);
+	return(0);
 }
 
 int	check_args(t_philo *forum, char **argv, int argc)
@@ -93,5 +101,8 @@ int	check_args(t_philo *forum, char **argv, int argc)
 		if (philo_atoi(argv[i], i, forum) == -1)
 			return (-1);
 	}
+	// printf("args are %d %d %d and %d and maybe %d\n", forum->philo_num, forum->time_to_die, forum->time_to_eat, forum->time_to_sleep, forum->meal_num);
+	if (mutex_print_state(forum) != 0)
+		return (-1);
 	return (0);
 }

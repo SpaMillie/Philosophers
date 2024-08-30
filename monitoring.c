@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 16:25:47 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 08:50:02 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,10 @@ void	*monitoring(void *arg)
 
     data = (t_omni *)arg;
     while(!data->can_go);
+	    printf("here\n");
     // while(1)
     // {
 	//     pthread_mutex_lock(data->forum->start);
-	//     printf("here\n");
     //     if (data->can_go)
     //     {           
     //         pthread_mutex_unlock(data->forum->start);

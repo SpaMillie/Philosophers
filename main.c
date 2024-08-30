@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 16:35:15 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 10:20:11 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,32 +18,58 @@
 // 	return (-1);
 // }
 
-static int	set_philo(t_philo *frm, t_philo *sophy, int i, pthread_mutex_t *fork)
+static int	set_philo(t_philo *frm, t_philo sophy, int i, pthread_mutex_t *fork)
 {
-	sophy->philo_num = i; //dnt forget that this isnt total philo_num
-	sophy->right_fork = &fork[i];
+	sophy.philo_num = i; //dnt forget that this isnt total philo_num
+	sophy.right_fork = &fork[i];
+	pthread_mutex_lock(sophy.right_fork);
+	printf("checking if the right fork can be locked\n");
+	pthread_mutex_unlock(sophy.right_fork);
 	if (i == frm->philo_num - 1)
-		sophy->left_fork = &fork[0];
+		sophy.left_fork = &fork[0];
 	else
-		sophy->left_fork = &fork[i + 1];
-	sophy->meal_num = frm->meal_num;
-	sophy->time_to_sleep = frm->time_to_sleep;
-	sophy->time_to_die = frm->time_to_die;
-	sophy->time_to_eat = frm->time_to_eat;
-	sophy->timing = frm->timing;
-	sophy->start = frm->start;
-	sophy->dead = 0;
-	sophy->eating = 0;
-	sophy->cur_meal = 0;
-	if (mutex_initing(sophy->state))
+		sophy.left_fork = &fork[i + 1];
+	pthread_mutex_lock(sophy.left_fork);
+	printf("checking if the left fork can be locked\n");
+	pthread_mutex_unlock(sophy.left_fork);
+	sophy.meal_num = frm->meal_num;
+	sophy.time_to_sleep = frm->time_to_sleep;
+	sophy.time_to_die = frm->time_to_die;
+	sophy.time_to_eat = frm->time_to_eat;
+	sophy.timing = frm->timing;
+	pthread_mutex_lock(frm->timing);
+	printf("checking if the forum timing can be locked\n");
+	pthread_mutex_unlock(frm->timing); 	
+	pthread_mutex_lock(sophy.timing);
+	printf("checking if the timing can be locked\n");
+	pthread_mutex_unlock(sophy.timing);
+	sophy.start = frm->start;
+	pthread_mutex_lock(frm->start);
+	printf("checking if the forum start can be locked\n");
+	pthread_mutex_unlock(frm->start); 	
+	pthread_mutex_lock(sophy.start);
+	printf("checking if the start can be locked\n");
+	pthread_mutex_unlock(sophy.start);	
+	sophy.dead = 0;
+	sophy.eating = 0;
+	sophy.cur_meal = 0;
+	printf("checking %d, %d, %d\n", sophy.time_to_die, sophy.time_to_eat, sophy.time_to_sleep);
+	sophy.state = mutex_initing();
+	if (!sophy.state)
 		return (-1);
- 	if (mutex_initing(sophy->meal_lock))
+	sophy.meal_lock = mutex_initing();
+	if (!sophy.meal_lock)
 	{
-		pthread_mutex_destroy(sophy->state);
+		pthread_mutex_destroy(sophy.state);
 		return (-1);
 	}
+ 	pthread_mutex_lock(sophy.state);
+	printf("checking if the state can be locked\n");
+	pthread_mutex_unlock(sophy.state);
+ 	pthread_mutex_lock(sophy.meal_lock);
+	printf("checking if the meal_lock can be locked\n");
+	pthread_mutex_unlock(sophy.meal_lock); 	
 	return (0);
-	// printf("checking %d, %d, %d\n", sophy->time_to_die, sophy->time_to_eat, sophy->time_to_sleep);
 }
 
 static int	set_forks(t_philo *forum, t_philo *sophies, pthread_mutex_t *forks)
@@ -56,14 +82,17 @@ static int	set_forks(t_philo *forum, t_philo *sophies, pthread_mutex_t *forks)
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
 		{
 			printf("Error: initialisation failed.\n");
-			free(sophies); //this is probably an issue
+			free(sophies);
 			while (--i > -1)
-				pthread_mutex_destroy(&forks[i]);//if this doesnt work then neither does the other thing 
+				pthread_mutex_destroy(&forks[i]);
+			free(forks);
 			pthread_mutex_destroy(forum->timing);
 			pthread_mutex_destroy(forum->start);
 			return (-1);
 		}
-			// return (init_failed(forum, *sophies, &forks, i));
+		// pthread_mutex_lock(&forks[i]);
+		// printf("checking fork num %d\n", i);
+		// pthread_mutex_unlock(&forks[i]);
 	}
 	return (0);
 }
@@ -124,6 +153,10 @@ static void	start(t_philo *forum, char **argv, int argc)
 
 	if (check_args(forum, argv, argc) == -1)
 		return ;
+	pthread_mutex_lock(forum->start);
+	printf("checking if the forum start can be locked\n");
+	pthread_mutex_unlock(forum->start); 	
+	printf("mutex for sure unlocked\n");
 	sophies = malloc(sizeof(t_philo) * forum->philo_num);
 	if (!sophies)
 		return (void_malloc_failed(forum));
@@ -138,7 +171,7 @@ static void	start(t_philo *forum, char **argv, int argc)
 	i = -1;
 	while (++i < forum->philo_num)
 	{
-		if (set_philo(forum, &sophies[i], i, forks) == -1)
+		if (set_philo(forum, sophies[i], i, forks) == -1) //check if it cleans up nicely
 			return (init_failed(forum, sophies, forks, i));	
 	}
 	start_simulation(forum, sophies, forks);

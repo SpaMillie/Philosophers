@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 16:26:05 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 09:39:11 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	cleanup(t_philo	*forum, t_philo	*sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 void	up_meal_num(t_philo *sopher);
 //checks.c
-int		mutex_initing(pthread_mutex_t *current);
+pthread_mutex_t		*mutex_initing(void);
 int		check_state(t_philo *sopher);
 int		check_meal_num(t_philo *sopher);
 // int		check_appetite(t_omni *data);

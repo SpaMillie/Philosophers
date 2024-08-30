@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/29 16:40:04 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/30 08:46:10 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static void	*life(void *arg)
     t_philo *sopher;
 
     sopher = (t_philo *)arg;
+	printf("%d has been born\n", sopher->philo_num);
 	pthread_mutex_lock(sopher->start); 
 	pthread_mutex_unlock(sopher->start);
 	while(!check_state)
@@ -69,6 +70,7 @@ int	philogenesis(t_omni *data)
 	i = -1;
 	printf("entered philogenesis\n");
 	pthread_mutex_lock(data->forum->start);
+	printf("start locked\n");
 	data->forum->start_time = lock_time(data->forum); 
 	printf("good philogenesis\n");
 	while (++i < data->forum->philo_num)
