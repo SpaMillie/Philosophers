@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 16:58:29 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 11:19:22 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 
 static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 {
-	sophy->philo_num = i; //dnt forget that this isnt total philo_num
+	sophy->id = i;
+	sophy->philo_num = tor->philo_num;
 	sophy->right_fork = &fork[i];
 	// pthread_mutex_lock(sophy->right_fork);
 	// printf("checking if the right fork can be locked\n");
@@ -55,7 +56,7 @@ static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 	sophy->cur_meal = 0;
 	if (mutex_initing(sophy) == -1)
 		return (-1);
-	printf("checking %d\n", sophy->philo_num);
+	// printf("checking %d\n", sophy->id);
  	// pthread_mutex_lock(&sophy->state);
 	// printf("checking if the state can be locked\n");
 	// pthread_mutex_unlock(&sophy->state);
@@ -97,7 +98,7 @@ static int	set_forks(t_moni *tor, t_philo *sophies, pthread_mutex_t *forks)
 // 	cur_time = get_time();
 // 	pthread_mutex_lock(&cur_ph->timing);
 // 	printf("%lu philosopher %d %s\n", cur_time - cur_ph->start_time, 
-// 		cur_ph->philo_num, str);
+// 		cur_ph->id, str);
 // 	pthread_mutex_unlock(&cur_ph->timing);
 // }
 
@@ -121,20 +122,26 @@ static void	start_simulation(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk)
 	data.sophies = sphs;
 	data.forks = frk;
 	data.can_go = 0;
-	printf("first num is %d and second is %d\n", sphs[0].philo_num, data.sophies[0].philo_num);
-	printf("entered start_ssimulatin\n");
+	pthread_mutex_lock(&tor->start);
+	// printf("entered start_ssimulatin\n");
 	if (pthread_create(&tor->thread, NULL, &monitoring, (void *)&data) != 0)
+	{
 		printf("Error: failed to create the monitoring thread\n");
+		pthread_mutex_unlock(&tor->start);
+		return ;
+	}
 	else
 	{
 		if (philogenesis(&data))
 		{
 			pthread_join(tor->thread, NULL);
+			pthread_mutex_unlock(&tor->start);
 			return ;
 		}
-		printf("exited philogenisis\n");
+		// printf("exited philogenisis\n");
+		pthread_mutex_unlock(&tor->start);
 		while (++i < tor->philo_num)
-				pthread_join(sphs[i].thread, NULL);
+			pthread_join(sphs[i].thread, NULL);
 		pthread_join(tor->thread, NULL);
 	}
 }
@@ -167,8 +174,14 @@ static void	start(t_moni *tor, char **argv, int argc)
 	{
 		if (set_philo(tor, &sophies[i], i, forks) == -1) //check if it cleans up nicely
 			return (init_failed(tor, sophies, forks, i));
-		printf("is it here %d\n", sophies[i].philo_num);	
+		// printf("is it here %d\n", sophies[i].id);	
 	}
+	// pthread_mutex_lock(&sophies[0].state);
+	// printf("checking if the state can be locked\n");
+	// pthread_mutex_unlock(&sophies[0].state);
+ 	// pthread_mutex_lock(&sophies[0].meal_lock);
+	// printf("checking if the meal_lock can be locked\n");
+	// pthread_mutex_unlock(&sophies[0].meal_lock);
 	start_simulation(tor, sophies, forks);
 	cleanup(tor, sophies, forks);
 }

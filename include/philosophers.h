@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 14:59:57 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 10:41:45 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct	s_moni
 
 typedef struct	s_philo
 {
+	int	id;
 	int	philo_num;
 	int	time_to_die; 
 	int	time_to_eat;
@@ -83,7 +84,7 @@ size_t  lock_time(pthread_mutex_t *cur);
 void	void_malloc_failed(t_moni *tor);
 void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
 void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
-size_t	print_out(char *str, pthread_mutex_t *cur, int id);
+size_t	print_out(char *str, pthread_mutex_t *cur, int id, size_t s_t);
 void	up_meal_num(t_philo *sopher);
 //checks.c
 int		mutex_initing(t_philo *sophy);

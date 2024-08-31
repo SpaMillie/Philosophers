@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 15:03:12 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 11:30:08 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ void	cleanup(t_moni	*tor, t_philo	*sophies, pthread_mutex_t *forks)
 	//check if this works by freeing it in the previous function too (double-free complaint)
 }
 
-size_t	print_out(char *str, pthread_mutex_t *cur, int id)
+size_t	print_out(char *str, pthread_mutex_t *cur, int id, size_t s_t)
 {
 	size_t	cur_time;
 
 	cur_time = lock_time(cur);
-	printf("%lu %d %s\n", cur_time, id, str);
+	printf("%lu %d %s\n", cur_time - s_t, id, str);
 	return (cur_time);
 }
 

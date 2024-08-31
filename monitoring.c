@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 17:00:05 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 11:54:27 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@ static void    kill_everyone(t_omni *data)
 {
     int i;
 
-    i = -1;
-	while (++i < data->tor->philo_num)
+    i = 0;
+	while (i < data->tor->philo_num)
 	{
 		pthread_mutex_lock(&data->sophies[i].state);
 		data->sophies[i].dead = 1;
 		pthread_mutex_unlock(&data->sophies[i].state);
+		i++;
     }
 }
 
@@ -29,20 +30,21 @@ static int	who_died(t_omni *data)
 {
 	int	i;
 
-	i = -1;
-	while (++i < data->tor->philo_num)
+	i = 0;
+	while (i < data->tor->philo_num)
 	{
 		pthread_mutex_lock(&data->sophies[i].state);
-		if (get_time() - data->tor->start_time > data->tor->time_to_die)
+		if (get_time() - data->sophies[i].last_ate > data->tor->time_to_die)
 		{
-			print_out("has died", &data->tor->timing, data->sophies[i].philo_num);
+			print_out("has died", &data->tor->timing, data->sophies[i].id, data->tor->start_time);
 			data->sophies[i].dead = 1;
 			pthread_mutex_unlock(&data->sophies[i].state);
 			kill_everyone(data);
 			return (1);
 		}
+		pthread_mutex_unlock(&data->sophies[i].state);
+		i++;
 	}
-	pthread_mutex_unlock(&data->sophies[i].state);
 	return (0);
 }
 
@@ -50,8 +52,8 @@ static int	who_ate(t_omni *data)
 {
 	int	i;
 
-	i = -1;
-	while (++i < data->tor->philo_num)
+	i = 0;
+	while (i < data->tor->philo_num)
 	{
 		pthread_mutex_lock(&data->sophies[i].meal_lock);
 		if (data->sophies[i].cur_meal == data->tor->meal_num)
@@ -63,8 +65,9 @@ static int	who_ate(t_omni *data)
 			kill_everyone(data);
 			return (1);
 		}
+		pthread_mutex_unlock(&data->sophies[i].meal_lock);
+		i++;
 	}
-	pthread_mutex_unlock(&data->sophies[i].meal_lock);
 	return (0);
 }
 
@@ -73,8 +76,8 @@ void	*monitoring(void *arg)
     t_omni  *data;
 
     data = (t_omni *)arg;
-    while(!data->can_go);
-	    printf("here\n");
+	ft_usleep(data->tor->time_to_die / 10, get_time());
+	// pthread_mutex_lock(&data->tor->start);
     // while(1)
     // {
 	//     pthread_mutex_lock(data->tor->start);
@@ -85,10 +88,11 @@ void	*monitoring(void *arg)
     //     }
 	//     pthread_mutex_unlock(&data->tor->start);
     // }
-	printf("here left\n");
+	// print_out("here left", &data->tor->timing, -2, data->tor->start_time);
+	// pthread_mutex_unlock(&data->tor->start);
 	while (1)
 	{
-		printf("checking\n");
+		// print_out("loop", &data->tor->timing, -2, data->tor->start_time);
 		if (who_died(data))
 			break ;
 		if (who_ate(data));
