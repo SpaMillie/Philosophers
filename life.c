@@ -6,35 +6,47 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 12:30:55 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 15:19:32 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
+static int	assassin(t_philo *sopher)
+{
+	pthread_mutex_lock(&sopher->state);
+	print_out("has died", sopher->timing, sopher->id, sopher->start_time);
+	sopher->dead = 1;
+	pthread_mutex_unlock(&sopher->state);	
+	return (1);
+}
 
-static int	eating(t_philo  *sopher)
+static int	table_4_1(t_philo *sopher)
 {
     pthread_mutex_lock(sopher->left_fork);
 	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time); 
-   	if (sopher->philo_num != 1)
-	{	
-		if (pthread_mutex_lock(sopher->right_fork) != 0)
-		{
-   			pthread_mutex_unlock(sopher->left_fork);
-			return (0);
-		}
-		print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time);
-	} 
-   	pthread_mutex_lock(&sopher->meal_lock);
-    sopher->last_ate = print_out("is eating", sopher->timing, sopher->id, sopher->start_time);
-    while(get_time() - sopher->last_ate < sopher->time_to_eat)
-    {
-        if (get_time() - sopher->last_ate > sopher->time_to_die)
-            break ;
-        else
-            ft_usleep(50, sopher->last_ate); 
-    }
-    sopher->meal_num++;
+	ft_usleep(sopher->time_to_die, sopher->start_time);
+	assassin(sopher);
+	return (1);
+}
+
+static int	eating(t_philo  *sopher)
+{
+	if (sopher->philo_num == 1)
+		return (table_4_1(sopher));
+    pthread_mutex_lock(sopher->left_fork);
+	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time);
+	pthread_mutex_lock(sopher->right_fork);
+	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time);
+	pthread_mutex_lock(&sopher->meal_lock);
+ 	if (!check_state(sopher))
+	{
+		sopher->last_ate = print_out("is eating", sopher->timing, sopher->id, sopher->start_time);
+		if (get_time() - sopher->last_ate > sopher->time_to_die)
+			return (assassin(sopher));
+		else
+			ft_usleep(sopher->time_to_eat, sopher->last_ate);
+	}
+	sopher->cur_meal++;
 	pthread_mutex_unlock(&sopher->meal_lock); 
    	if (sopher->philo_num != 1)
     	pthread_mutex_unlock(sopher->right_fork); 
@@ -44,11 +56,11 @@ static int	eating(t_philo  *sopher)
 
 static int	sleeping(t_philo *sopher)
 {
-	print_out("is sleeping", sopher->timing, sopher->id, sopher->start_time);
-	while(get_time() - (sopher->last_ate + sopher->time_to_eat) < sopher->time_to_sleep)
+	if (!check_state(sopher))
     {
-        if (get_time() - sopher->last_ate < sopher->time_to_die)
-            break ;
+		print_out("is sleeping", sopher->timing, sopher->id, sopher->start_time);
+        if (get_time() - sopher->last_ate > sopher->time_to_die)
+            return (assassin(sopher)) ;
         else
             ft_usleep(sopher->time_to_sleep, sopher->last_ate + sopher->time_to_eat); 
     }
@@ -59,7 +71,7 @@ static void	thinking(t_philo *sopher)
 	print_out("is thinking", sopher->timing, sopher->id, sopher->start_time);
 	if ((sopher->id == 0 || \
 		sopher->id % 2 == 0) && sopher->cur_meal == 0)
-		ft_usleep(sopher->time_to_eat / 2, sopher->start_time);
+		ft_usleep(sopher->time_to_die / 10, sopher->start_time);
 }
 
 static void	*life(void *arg)
@@ -68,7 +80,7 @@ static void	*life(void *arg)
 
     sopher = (t_philo *)arg;
 	// print_out("has been born", sopher->timing, sopher->id, sopher->start_time);
-	ft_usleep(10, get_time());
+	// ft_usleep(10, get_time());
 	pthread_mutex_lock(sopher->start);
 	// print_out("philo locked the start", sopher->timing, sopher->id, sopher->start_time);
 	pthread_mutex_unlock(sopher->start);
@@ -88,7 +100,7 @@ static void	*life(void *arg)
 			// printf("exited 2\n");
 			break ;
 		}
-		if (eating(sopher) == 1)
+		if (eating(sopher) == 0)
 			sleeping(sopher);
 	}
 }

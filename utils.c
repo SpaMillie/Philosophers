@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 11:30:08 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/08/31 14:27:49 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ size_t	print_out(char *str, pthread_mutex_t *cur, int id, size_t s_t)
 	size_t	cur_time;
 
 	cur_time = lock_time(cur);
-	printf("%lu %d %s\n", cur_time - s_t, id, str);
+	printf("%lu %d %s\n", cur_time - s_t, id + 1, str);
 	return (cur_time);
 }
 
