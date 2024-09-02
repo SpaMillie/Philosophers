@@ -6,7 +6,7 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/08/31 10:16:37 by mspasic          ###   ########.fr        #
+#    Updated: 2024/09/02 11:36:16 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ SOURCES = main.c \
 		life.c \
 		monitoring.c \
 		timing.c \
-		utils.c
+		utils.c \
+		utils2.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

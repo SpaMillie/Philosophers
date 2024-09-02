@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 10:32:52 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 11:45:00 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ void	void_malloc_failed(t_moni *tor);
 void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
 void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
+//utils2.c
+int		sudden_death(t_philo *sopher, int eat_sleep);
 // void	up_meal_num(t_philo *sopher);
 //checks.c
 int		mutex_initing(t_philo *sophy);
@@ -101,6 +103,7 @@ int		check_stop(t_philo *sopher);
 // void	sleeping(t_philo *sopher);
 // void	thinking(t_philo *sopher);
 // void	life(t_philo *sopher);
+int		assassin(t_philo *sopher);
 int		philogenesis(t_omni *data);
 //monitoring.c
 // int		who_died(t_omni *data);

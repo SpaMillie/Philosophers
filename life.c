@@ -6,12 +6,12 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 10:43:57 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 11:46:55 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
-static int	assassin(t_philo *sopher)
+int	assassin(t_philo *sopher)
 {
 	pthread_mutex_lock(&sopher->state);
 	print_out("has died", sopher);
@@ -46,13 +46,14 @@ static int	eating(t_philo  *sopher)
 		else
 		{
 			sopher->last_ate = print_out("is eating", sopher);
+			if (sopher->time_to_die < sopher->time_to_eat)
+				return (sudden_death(sopher, 1));
 			ft_usleep(sopher->time_to_eat, sopher->last_ate);
 		}
 	}
 	sopher->cur_meal++;
 	pthread_mutex_unlock(&sopher->meal_lock); 
-   	if (sopher->philo_num != 1)
-    	pthread_mutex_unlock(sopher->right_fork); 
+   	pthread_mutex_unlock(sopher->right_fork); 
    	pthread_mutex_unlock(sopher->left_fork);
 	return (0);
 }
@@ -65,7 +66,11 @@ static int	sleeping(t_philo *sopher)
 		if (get_time() - sopher->last_ate > sopher->time_to_die)
             return (assassin(sopher));
         else
-            ft_usleep(sopher->time_to_sleep, sopher->last_ate + sopher->time_to_eat); 
+		{
+			if (sopher->time_to_die < sopher->time_to_sleep)
+				return (sudden_death(sopher, 0));
+			ft_usleep(sopher->time_to_sleep, sopher->last_ate + sopher->time_to_eat); 
+		}
     }
 	if (get_time() - sopher->last_ate > sopher->time_to_die)
 		return (assassin(sopher));
