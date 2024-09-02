@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 11:19:22 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 09:26:54 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 	sophy->time_to_die = tor->time_to_die;
 	sophy->time_to_eat = tor->time_to_eat;
 	sophy->timing = &tor->timing;
+	sophy->stop = &tor->stop;
 	// pthread_mutex_lock(&tor->timing);
 	// printf("checking if the tor timing can be locked\n");
 	// pthread_mutex_unlock(&tor->timing); 	

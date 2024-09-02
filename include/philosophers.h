@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 10:41:45 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 10:32:52 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct	s_moni
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	meal_num;
+	int	stop;
 	size_t start_time;
 	pthread_t	thread;
 	pthread_mutex_t	timing;
@@ -47,6 +48,7 @@ typedef struct	s_philo
 	int	cur_meal;
 	int	dead; //flag for state
 	int	eating; //for meal num change flag
+	int	*stop;
 	size_t start_time;
 	size_t cur_time; //not needed?
 	size_t last_ate;
@@ -80,16 +82,18 @@ int     ft_atoi(const char *str);
 void    ft_usleep(size_t sleep_time, size_t start);
 size_t	get_time(void);
 size_t  lock_time(pthread_mutex_t *cur);
+void    change_stop(t_philo *sopher);
 //utils.c
 void	void_malloc_failed(t_moni *tor);
 void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
 void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
-size_t	print_out(char *str, pthread_mutex_t *cur, int id, size_t s_t);
-void	up_meal_num(t_philo *sopher);
+size_t	print_out(char *str, t_philo *sopher);
+// void	up_meal_num(t_philo *sopher);
 //checks.c
 int		mutex_initing(t_philo *sophy);
 int		check_state(t_philo *sopher);
 int		check_meal_num(t_philo *sopher);
+int		check_stop(t_philo *sopher);
 // int		check_appetite(t_omni *data);
 // int		check_death(t_omni *data);
 //life.c

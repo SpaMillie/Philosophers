@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 15:19:32 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 10:43:57 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 static int	assassin(t_philo *sopher)
 {
 	pthread_mutex_lock(&sopher->state);
-	print_out("has died", sopher->timing, sopher->id, sopher->start_time);
+	print_out("has died", sopher);
+	change_stop(sopher);
 	sopher->dead = 1;
 	pthread_mutex_unlock(&sopher->state);	
 	return (1);
@@ -23,7 +24,7 @@ static int	assassin(t_philo *sopher)
 static int	table_4_1(t_philo *sopher)
 {
     pthread_mutex_lock(sopher->left_fork);
-	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time); 
+	print_out("has taken a fork", sopher); 
 	ft_usleep(sopher->time_to_die, sopher->start_time);
 	assassin(sopher);
 	return (1);
@@ -34,17 +35,19 @@ static int	eating(t_philo  *sopher)
 	if (sopher->philo_num == 1)
 		return (table_4_1(sopher));
     pthread_mutex_lock(sopher->left_fork);
-	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time);
+	print_out("has taken a fork", sopher);
 	pthread_mutex_lock(sopher->right_fork);
-	print_out("has taken a fork", sopher->timing, sopher->id, sopher->start_time);
+	print_out("has taken a fork", sopher);
 	pthread_mutex_lock(&sopher->meal_lock);
  	if (!check_state(sopher))
 	{
-		sopher->last_ate = print_out("is eating", sopher->timing, sopher->id, sopher->start_time);
 		if (get_time() - sopher->last_ate > sopher->time_to_die)
 			return (assassin(sopher));
 		else
+		{
+			sopher->last_ate = print_out("is eating", sopher);
 			ft_usleep(sopher->time_to_eat, sopher->last_ate);
+		}
 	}
 	sopher->cur_meal++;
 	pthread_mutex_unlock(&sopher->meal_lock); 
@@ -58,17 +61,20 @@ static int	sleeping(t_philo *sopher)
 {
 	if (!check_state(sopher))
     {
-		print_out("is sleeping", sopher->timing, sopher->id, sopher->start_time);
-        if (get_time() - sopher->last_ate > sopher->time_to_die)
-            return (assassin(sopher)) ;
+		print_out("is sleeping", sopher);
+		if (get_time() - sopher->last_ate > sopher->time_to_die)
+            return (assassin(sopher));
         else
             ft_usleep(sopher->time_to_sleep, sopher->last_ate + sopher->time_to_eat); 
     }
+	if (get_time() - sopher->last_ate > sopher->time_to_die)
+		return (assassin(sopher));
+	return (0);
 }
 
 static void	thinking(t_philo *sopher)
 {
-	print_out("is thinking", sopher->timing, sopher->id, sopher->start_time);
+	print_out("is thinking", sopher);
 	if ((sopher->id == 0 || \
 		sopher->id % 2 == 0) && sopher->cur_meal == 0)
 		ft_usleep(sopher->time_to_die / 10, sopher->start_time);

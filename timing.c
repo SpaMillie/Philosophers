@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 21:12:17 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 14:55:13 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 10:33:07 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,11 @@ size_t  lock_time(pthread_mutex_t *cur)
     cur_time = get_time();
     pthread_mutex_unlock(cur);
     return (cur_time);
+}
+
+void    change_stop(t_philo *sopher)
+{
+	pthread_mutex_lock(sopher->start);
+    *sopher->stop = 1;
+    pthread_mutex_unlock(sopher->start);
 }

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:48:09 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/31 11:20:55 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 10:34:47 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,19 @@ int	check_state(t_philo *sopher)
 	cur_state = sopher->dead;
 	// printf("cur state is %d\n", sopher->dead);
 	pthread_mutex_unlock(&sopher->state);
+	return (cur_state);
+}
+
+int	check_stop(t_philo *sopher)
+{
+	int	cur_state;
+
+	// printf("entered check_state\n");
+	pthread_mutex_lock(sopher->start);
+	cur_state = *sopher->stop;
+	// if (*sopher->stop != 1)
+	// 	*sopher->stop = 1;
+	// printf("cur state is %d\n", sopher->dead);
+	pthread_mutex_unlock(sopher->start);
 	return (cur_state);
 }

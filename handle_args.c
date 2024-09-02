@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/30 15:04:47 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 09:26:06 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ int	check_args(t_moni *tor, char **argv, int argc)
 		if (philo_atoi(argv[i], i, tor) == -1)
 			return (-1);
 	}
+	tor->stop = 0;
 	// printf("args are %d %d %d and %d and maybe %d\n", tor->philo_num, tor->time_to_die, tor->time_to_eat, tor->time_to_sleep, tor->meal_num);
 	if (mutex_print_state(tor) != 0)
 		return (-1);
