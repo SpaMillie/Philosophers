@@ -6,7 +6,7 @@
 #    By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/30 16:34:03 by mspasic           #+#    #+#              #
-#    Updated: 2024/09/02 11:36:16 by mspasic          ###   ########.fr        #
+#    Updated: 2024/09/02 13:15:03 by mspasic          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ OBJECTS = $(SOURCES:.c=.o)
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror -g -fsanitize=address 
+FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 

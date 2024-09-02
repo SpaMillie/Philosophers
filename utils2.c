@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 11:02:50 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 11:49:38 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:36:01 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,37 @@ int sudden_death(t_philo *sopher, int eat_sleep)
         // printf("everything unlocked\n");
     }
     return (1);
+}
+
+int	assassin(t_philo *sopher)
+{
+	pthread_mutex_lock(&sopher->state);
+	print_out("has died", sopher);
+	change_stop(sopher);
+	sopher->dead = 1;
+	pthread_mutex_unlock(&sopher->state);	
+	return (1);
+}
+
+int	table_4_1(t_philo *sopher)
+{
+    pthread_mutex_lock(sopher->left_fork);
+	print_out("has taken a fork", sopher); 
+	ft_usleep(sopher->time_to_die, sopher->start_time);
+	assassin(sopher);
+	return (1);
+}
+
+void    sim_cleanup(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk)
+{
+    int i;
+
+    i = 0;
+	pthread_mutex_unlock(&tor->start);
+    while (i < tor->philo_num)
+    {
+        pthread_join(sphs[i].thread, NULL);
+        i++;
+    }
+    pthread_join(tor->thread, NULL);
 }

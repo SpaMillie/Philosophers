@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 09:26:06 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:17:34 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,6 @@ static int	mutex_print_state(t_moni *tor)
 		pthread_mutex_destroy(&tor->timing);
 		return (-1);
 	}
-	// pthread_mutex_lock(&tor->timing);
-	// printf("locked timing\n");
-	// pthread_mutex_unlock(&tor->timing);
-	// printf("unlocked timing\n");
 	if (pthread_mutex_init(&tor->start, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
@@ -47,10 +43,6 @@ static int	mutex_print_state(t_moni *tor)
 		pthread_mutex_destroy(&tor->start);
 		return (-1);
 	}
-	// pthread_mutex_lock(&tor->start);
-	// printf("locked start check\n");
-	// pthread_mutex_unlock(&tor->start);
-	// printf("unlocked start\n");
 	return (0);
 }
 
@@ -69,7 +61,6 @@ static void	init_args(int i, int num, t_moni *tor)
 	}
 	else if (i == 4)
 		tor->meal_num = num;
-	// tor->start_time = get_time(); strt time when you start
 }
 
 static int	philo_atoi(char *str, int i, t_moni *tor)
@@ -83,7 +74,7 @@ static int	philo_atoi(char *str, int i, t_moni *tor)
 		return (-1);
 	}
 	init_args(i, num, tor);
-	return(0);
+	return (0);
 }
 
 int	check_args(t_moni *tor, char **argv, int argc)
@@ -97,7 +88,6 @@ int	check_args(t_moni *tor, char **argv, int argc)
 			return (-1);
 	}
 	tor->stop = 0;
-	// printf("args are %d %d %d and %d and maybe %d\n", tor->philo_num, tor->time_to_die, tor->time_to_eat, tor->time_to_sleep, tor->meal_num);
 	if (mutex_print_state(tor) != 0)
 		return (-1);
 	return (0);

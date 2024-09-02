@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 11:45:00 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:37:13 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 //utils2.c
 int		sudden_death(t_philo *sopher, int eat_sleep);
+void    sim_cleanup(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk);
 // void	up_meal_num(t_philo *sopher);
 //checks.c
 int		mutex_initing(t_philo *sophy);

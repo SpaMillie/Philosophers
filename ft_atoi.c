@@ -6,12 +6,11 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 18:47:55 by mspasic           #+#    #+#             */
-/*   Updated: 2024/08/28 18:14:38 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:18:00 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
-
 
 static int	ft_sign(char c)
 {
