@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 12:48:09 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:16:35 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:11:44 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,6 @@ int	mutex_initing(t_philo *sophy)
 		return (-1);
 	}
 	return (0);
-}
-
-int	check_meal_num(t_philo *sopher)
-{
-	pthread_mutex_lock(&sopher->meal_lock);
-	if (sopher->cur_meal == sopher->meal_num)
-	{
-		pthread_mutex_lock(&sopher->state);
-		sopher->dead = 1;
-		pthread_mutex_unlock(&sopher->state);
-	}
-	pthread_mutex_unlock(&sopher->meal_lock);
 }
 
 int	check_state(t_philo *sopher)

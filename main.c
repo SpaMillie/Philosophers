@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:36:39 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:23:42 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 	sophy->timing = &tor->timing;
 	sophy->stop = &tor->stop;
 	sophy->start = &tor->start;
+	sophy->print = &tor->print;
 	sophy->dead = 0;
 	sophy->eating = 0;
 	sophy->cur_meal = 0;
@@ -64,16 +65,12 @@ static int	set_forks(t_moni *tor, t_philo *sophies, pthread_mutex_t *forks)
 	return (0);
 }
 
-static void	start_simulation(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk)
+static void	start_simulation(t_moni *tor, t_philo *sphs)
 {
 	t_omni	data;
-	int		i;
 
-	i = -1;
 	data.tor = tor;
 	data.sophies = sphs;
-	data.forks = frk;
-	data.can_go = 0;
 	pthread_mutex_lock(&tor->start);
 	if (pthread_create(&tor->thread, NULL, &monitoring, (void *)&data) != 0)
 	{
@@ -88,8 +85,8 @@ static void	start_simulation(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk)
 			pthread_join(tor->thread, NULL);
 			pthread_mutex_unlock(&tor->start);
 			return ;
-		}
-		sim_cleanup(tor, sphs, frk);
+		}	
+		sim_cleanup(tor, sphs);
 	}
 }
 
@@ -115,10 +112,10 @@ static void	start(t_moni *tor, char **argv, int argc)
 	i = -1;
 	while (++i < tor->philo_num)
 	{
-		if (set_philo(tor, &sophies[i], i, forks) == -1) //check if it cleans up nicely
+		if (set_philo(tor, &sophies[i], i, forks) == -1)
 			return (init_failed(tor, sophies, forks, i));
 	}
-	start_simulation(tor, sophies, forks);
+	start_simulation(tor, sophies);
 	cleanup(tor, sophies, forks);
 }
 

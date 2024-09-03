@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:39:14 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:17:34 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:12:52 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,15 @@ static int	mutex_print_state(t_moni *tor)
 	if (pthread_mutex_init(&tor->timing, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
-		pthread_mutex_destroy(&tor->timing);
 		return (-1);
 	}
 	if (pthread_mutex_init(&tor->start, NULL) != 0)
+	{
+		printf("Error: initialisation failed.\n");
+		pthread_mutex_destroy(&tor->timing);
+		return (-1);
+	}
+	if (pthread_mutex_init(&tor->print, NULL) != 0)
 	{
 		printf("Error: initialisation failed.\n");
 		pthread_mutex_destroy(&tor->timing);

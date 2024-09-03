@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:26:07 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:24:28 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@ static int	eating(t_philo *sopher)
 	print_out("has taken a fork", sopher);
 	pthread_mutex_lock(sopher->right_fork);
 	print_out("has taken a fork", sopher);
-	pthread_mutex_lock(&sopher->meal_lock);
 	if (!check_state(sopher))
 	{
 		if (get_time() - sopher->last_ate > sopher->time_to_die)
-			return (assassin(sopher));
+			return (assassin(sopher, 1));
 		else
 		{
 			sopher->last_ate = print_out("is eating", sopher);
@@ -33,6 +32,7 @@ static int	eating(t_philo *sopher)
 			ft_usleep(sopher->time_to_eat, sopher->last_ate);
 		}
 	}
+	pthread_mutex_lock(&sopher->meal_lock);
 	sopher->cur_meal++;
 	pthread_mutex_unlock(&sopher->meal_lock);
 	pthread_mutex_unlock(sopher->right_fork);
@@ -46,7 +46,7 @@ static int	sleeping(t_philo *sopher)
 	{
 		print_out("is sleeping", sopher);
 		if (get_time() - sopher->last_ate > sopher->time_to_die)
-			return (assassin(sopher));
+			return (assassin(sopher, 0));
 		else
 		{
 			if (sopher->time_to_die < sopher->time_to_sleep)
@@ -56,7 +56,7 @@ static int	sleeping(t_philo *sopher)
 		}
 	}
 	if (get_time() - sopher->last_ate > sopher->time_to_die)
-		return (assassin(sopher));
+		return (assassin(sopher, 0));
 	return (0);
 }
 
@@ -85,6 +85,7 @@ static void	*life(void *arg)
 		if (eating(sopher) == 0)
 			sleeping(sopher);
 	}
+	return (NULL);
 }
 
 int	philogenesis(t_omni *data)
@@ -106,6 +107,6 @@ int	philogenesis(t_omni *data)
 			return (1);
 		}
 		i++;
-	}
+	}	
 	return (0);
 }

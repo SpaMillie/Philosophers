@@ -6,16 +6,12 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:37:13 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:10:44 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-//dont forget to remove fsanitize and put everything in a philo directory
-
-
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
 # include <stdio.h>
 # include <pthread.h>
@@ -25,56 +21,54 @@
 
 typedef struct	s_moni
 {
-	int	philo_num;
-	int	time_to_die; 
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	meal_num;
-	int	stop;
-	size_t start_time;
-	pthread_t	thread;
+	int				philo_num;
+	int				meal_num;
+	int				stop;
+	size_t			time_to_die; 
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	size_t			start_time;
+	pthread_t		thread;
 	pthread_mutex_t	timing;
 	pthread_mutex_t	start;
+	pthread_mutex_t	print;
 }	t_moni;
+
 
 typedef struct	s_philo
 {
-	int	id;
-	int	philo_num;
-	int	time_to_die; 
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	meal_num;
-	int	cur_meal;
-	int	dead; //flag for state
-	int	eating; //for meal num change flag
-	int	*stop;
-	size_t start_time;
-	size_t cur_time; //not needed?
-	size_t last_ate;
-	pthread_t	thread;
+	int				id;
+	int				philo_num;
+	size_t			time_to_die; 
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	int				meal_num;
+	int				cur_meal;
+	int				dead;
+	int				eating;
+	int				*stop;
+	size_t			start_time;
+	size_t			last_ate;
+	pthread_t		thread;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*timing;
 	pthread_mutex_t	*start;
-	pthread_mutex_t	state; //init
+	pthread_mutex_t	*print;
+	pthread_mutex_t	state;
 	pthread_mutex_t	meal_lock;
 }	t_philo;
 
 typedef struct s_omni
 {
-	t_moni	*tor;
-	t_philo *sophies;
-	pthread_mutex_t	*forks;
-	int	can_go;
+	t_moni			*tor;
+	t_philo			*sophies;
 }	t_omni;
 
-/*	ALL (NON-STATIC) FUNCTIONS	*/        //ALSO YOU NEED TO MAKE THEM STATIC IF THEY NEED TO BE STATIC
+/*	ALL (NON-STATIC) FUNCTIONS	*/ 
 
-//main.c
 //handle_args.c
 int		digit_finder(char *str);
-// int		mutex_print_state(t_moni *tor);
 int		check_args(t_moni *tor, char **argv, int argc);
 //ft_atoi.c
 int     ft_atoi(const char *str);
@@ -86,29 +80,20 @@ void    change_stop(t_philo *sopher);
 //utils.c
 void	void_malloc_failed(t_moni *tor);
 void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
-void	cleanup(t_moni *tor, t_philo	*sophies, pthread_mutex_t *forks);
+void	cleanup(t_moni *tor, t_philo *sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 //utils2.c
 int		sudden_death(t_philo *sopher, int eat_sleep);
-void    sim_cleanup(t_moni *tor, t_philo *sphs, pthread_mutex_t *frk);
-// void	up_meal_num(t_philo *sopher);
+void    sim_cleanup(t_moni *tor, t_philo *sphs);
+int		table_4_1(t_philo *sopher);
+int		assassin(t_philo *sopher, int eat_print);
 //checks.c
 int		mutex_initing(t_philo *sophy);
 int		check_state(t_philo *sopher);
-int		check_meal_num(t_philo *sopher);
 int		check_stop(t_philo *sopher);
-// int		check_appetite(t_omni *data);
-// int		check_death(t_omni *data);
 //life.c
-// void    eating(t_philo  *sophie);
-// void	sleeping(t_philo *sopher);
-// void	thinking(t_philo *sopher);
-// void	life(t_philo *sopher);
-int		assassin(t_philo *sopher);
 int		philogenesis(t_omni *data);
 //monitoring.c
-// int		who_died(t_omni *data);
-// int		who_ate(t_omni *data);
 void	*monitoring(void *data);
 
 #endif

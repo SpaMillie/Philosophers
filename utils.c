@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:45:07 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/03 09:31:07 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i)
 	free(frks);
 	pthread_mutex_destroy(&tor->start);
 	pthread_mutex_destroy(&tor->timing);
+	pthread_mutex_destroy(&tor->print);
 }
 
 void	cleanup(t_moni	*tor, t_philo	*sophies, pthread_mutex_t *forks)
@@ -43,6 +44,7 @@ void	cleanup(t_moni	*tor, t_philo	*sophies, pthread_mutex_t *forks)
 		pthread_mutex_destroy(&forks[i++]);
 	pthread_mutex_destroy(&tor->timing);
 	pthread_mutex_destroy(&tor->start);
+	pthread_mutex_destroy(&tor->print);
 	free(sophies);
 	free(forks);
 }
@@ -51,9 +53,11 @@ size_t	print_out(char *str, t_philo *sopher)
 {
 	size_t	cur_time;
 
+	pthread_mutex_lock(sopher->print);
 	cur_time = lock_time(sopher->timing);
 	if (check_stop(sopher) != 1)
 		printf("%lu %d %s\n", cur_time - sopher->start_time, \
 			sopher->id + 1, str);
+	pthread_mutex_unlock(sopher->print);
 	return (cur_time);
 }
