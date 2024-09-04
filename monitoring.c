@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/04 11:45:28 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/04 14:34:25 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,10 @@ static int	who_died(t_omni *data)
 	while (i < data->tor->philo_num)
 	{
 		pthread_mutex_lock(&data->sophies[i].state);
-		if (data->sophies[i].dead == 1 || (get_time() - data->tor->start_time > 10 && \
-			data->sophies[i].dead == 0 && \
-			get_time() - data->sophies[i].last_ate >= data->tor->time_to_die))		
+		if (data->sophies[i].dead == 1 || \
+			(get_time() - data->tor->start_time > 10 \
+			&& data->sophies[i].dead == 0 && \
+			get_time() - data->sophies[i].last_ate >= data->tor->time_to_die))
 		{
 			if (data->sophies[i].dead == 0)
 			{
@@ -89,7 +90,7 @@ static int	who_ate(t_omni *data)
 void	*monitoring(void *arg)
 {
 	t_omni	*data;
-	
+
 	data = (t_omni *)arg;
 	while (1)
 	{
