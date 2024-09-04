@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/03 09:28:45 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:45:28 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,16 @@ static int	who_died(t_omni *data)
 	while (i < data->tor->philo_num)
 	{
 		pthread_mutex_lock(&data->sophies[i].state);
-		if (data->sophies[i].dead == 1)		
+		if (data->sophies[i].dead == 1 || (get_time() - data->tor->start_time > 10 && \
+			data->sophies[i].dead == 0 && \
+			get_time() - data->sophies[i].last_ate >= data->tor->time_to_die))		
 		{
+			if (data->sophies[i].dead == 0)
+			{
+				print_out("has died", &data->sophies[i]);
+				change_stop(&data->sophies[i]);
+				data->sophies[i].dead = 1;
+			}
 			pthread_mutex_unlock(&data->sophies[i].state);
 			kill_everyone(data);
 			return (1);

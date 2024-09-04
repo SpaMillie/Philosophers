@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/03 09:10:44 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:44:28 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		check_args(t_moni *tor, char **argv, int argc);
 //ft_atoi.c
 int     ft_atoi(const char *str);
 //timing.c
-void    ft_usleep(size_t sleep_time, size_t start);
+void    ft_usleep(t_philo *sopher, size_t sleep_time, size_t start);
 size_t	get_time(void);
 size_t  lock_time(pthread_mutex_t *cur);
 void    change_stop(t_philo *sopher);

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 21:12:17 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/02 13:43:40 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:43:22 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,20 @@ size_t	get_time(void)
 	return (millisec);
 }
 
-void	ft_usleep(size_t sleep_time, size_t start)
+void	ft_usleep(t_philo *sopher, size_t sleep_time, size_t start)
 {
+	size_t	cur_time;
+
 	while (get_time() - start < sleep_time)
+	{
 		usleep(500);
+		cur_time = lock_time(sopher->timing);
+		if (cur_time - sopher->last_ate >= sopher->time_to_die)
+		{
+			assassin(sopher, 0);
+			break ;
+		}
+	}
 }
 
 size_t	lock_time(pthread_mutex_t *cur)

@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/03 09:24:28 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:44:50 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	eating(t_philo *sopher)
 			sopher->last_ate = print_out("is eating", sopher);
 			if (sopher->time_to_die < sopher->time_to_eat)
 				return (sudden_death(sopher, 1));
-			ft_usleep(sopher->time_to_eat, sopher->last_ate);
+			ft_usleep(sopher, sopher->time_to_eat, sopher->last_ate);
 		}
 	}
 	pthread_mutex_lock(&sopher->meal_lock);
@@ -51,7 +51,7 @@ static int	sleeping(t_philo *sopher)
 		{
 			if (sopher->time_to_die < sopher->time_to_sleep)
 				return (sudden_death(sopher, 0));
-			ft_usleep(sopher->time_to_sleep, \
+			ft_usleep(sopher, sopher->time_to_sleep, \
 				sopher->last_ate + sopher->time_to_eat);
 		}
 	}
@@ -65,7 +65,7 @@ static void	thinking(t_philo *sopher)
 	print_out("is thinking", sopher);
 	if ((sopher->id == 0 || \
 		sopher->id % 2 == 0) && sopher->cur_meal == 0)
-		ft_usleep(sopher->time_to_die / 10, sopher->start_time);
+		ft_usleep(sopher, sopher->time_to_die / 10, sopher->start_time);
 }
 
 static void	*life(void *arg)
