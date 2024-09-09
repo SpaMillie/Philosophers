@@ -6,17 +6,11 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/03 09:23:42 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/09 13:27:18 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
-
-// int	int_malloc_failed(void)
-// {
-// 	printf("Error: Malloc failed.\n");
-// 	return (-1);
-// }
 
 static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 {
@@ -36,7 +30,6 @@ static int	set_philo(t_moni *tor, t_philo *sophy, int i, pthread_mutex_t *fork)
 	sophy->start = &tor->start;
 	sophy->print = &tor->print;
 	sophy->dead = 0;
-	sophy->eating = 0;
 	sophy->cur_meal = 0;
 	if (mutex_initing(sophy) == -1)
 		return (-1);

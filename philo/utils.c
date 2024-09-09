@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 20:42:18 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/03 09:31:07 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/09 13:29:00 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 void	void_malloc_failed(t_moni *tor)
 {
 	pthread_mutex_destroy(&tor->timing);
+	pthread_mutex_destroy(&tor->print);
+	pthread_mutex_destroy(&tor->start);
 	printf("Error: Malloc failed.\n");
 }
 

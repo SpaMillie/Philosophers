@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/04 14:30:48 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/09 13:27:27 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ typedef struct s_philo
 	int				meal_num;
 	int				cur_meal;
 	int				dead;
-	int				eating;
 	int				*stop;
 	size_t			start_time;
 	size_t			last_ate;
