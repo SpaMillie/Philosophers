@@ -6,11 +6,18 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 11:02:50 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/04 11:44:16 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/11 12:38:16 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/philosophers.h"
+
+void	change_state(t_philo *sopher)
+{
+	pthread_mutex_lock(&sopher->state);
+	sopher->dead = 1;
+	pthread_mutex_unlock(&sopher->state);
+}
 
 int	sudden_death(t_philo *sopher, int eat_sleep)
 {

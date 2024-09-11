@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:04:10 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/09 13:27:27 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/11 12:36:36 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	init_failed(t_moni *tor, t_philo *sphs, pthread_mutex_t *frks, int i);
 void	cleanup(t_moni *tor, t_philo *sophies, pthread_mutex_t *forks);
 size_t	print_out(char *str, t_philo *sopher);
 //utils2.c
+void	change_state(t_philo *sopher);
 int		sudden_death(t_philo *sopher, int eat_sleep);
 void	sim_cleanup(t_moni *tor, t_philo *sphs);
 int		table_4_1(t_philo *sopher);

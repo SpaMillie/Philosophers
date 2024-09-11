@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:00:59 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/04 11:44:50 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/11 12:37:25 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,13 @@ int	philogenesis(t_omni *data)
 			&life, (void *)&data->sophies[i]) != 0)
 		{
 			printf("Error: philogenesis failed\n");
+			data->tor->stop = 1;
+			pthread_mutex_unlock(&data->tor->start);
 			while (--i > -1)
+			{
+				change_state(&data->sophies[i]);
 				pthread_join(data->sophies[i].thread, NULL);
+			}
 			return (1);
 		}
 		i++;

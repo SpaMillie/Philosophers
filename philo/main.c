@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 17:07:07 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/09 13:27:18 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/11 12:29:29 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ static int	set_forks(t_moni *tor, t_philo *sophies, pthread_mutex_t *forks)
 			free(forks);
 			pthread_mutex_destroy(&tor->timing);
 			pthread_mutex_destroy(&tor->start);
+			pthread_mutex_destroy(&tor->print);
 			return (-1);
 		}
 	}
@@ -76,7 +77,6 @@ static void	start_simulation(t_moni *tor, t_philo *sphs)
 		if (philogenesis(&data))
 		{
 			pthread_join(tor->thread, NULL);
-			pthread_mutex_unlock(&tor->start);
 			return ;
 		}	
 		sim_cleanup(tor, sphs);

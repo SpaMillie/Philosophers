@@ -6,7 +6,7 @@
 /*   By: mspasic <mspasic@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 13:07:58 by mspasic           #+#    #+#             */
-/*   Updated: 2024/09/04 14:34:25 by mspasic          ###   ########.fr       */
+/*   Updated: 2024/09/11 12:39:44 by mspasic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,6 @@ static int	who_died(t_omni *data)
 	return (0);
 }
 
-static void	ft_full(t_philo *sopher)
-{
-	pthread_mutex_lock(&sopher->state);
-	sopher->dead = 1;
-	pthread_mutex_unlock(&sopher->state);
-}
-
 static int	who_ate(t_omni *data)
 {
 	int	i;
@@ -76,7 +69,7 @@ static int	who_ate(t_omni *data)
 			count++;
 		if (count == data->tor->philo_num)
 		{
-			ft_full(&data->sophies[i]);
+			change_state(&data->sophies[i]);
 			pthread_mutex_unlock(&data->sophies[i].meal_lock);
 			kill_everyone(data);
 			return (1);
